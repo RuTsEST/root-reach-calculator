@@ -32,7 +32,7 @@ const ChooseFactionButtons = () => {
             <Stack direction="row">
                 {choosableFactions.map(choosableFactions => (
                     <Fab>
-                        <Avatar src={choosableFactions.image}/>
+                        <Avatar imgProps={{objectFit: "contain"}} src={choosableFactions.image} variant="string"/>
                     </Fab>
                 ))}
             </Stack>
