@@ -10,34 +10,59 @@ import riverfolkImage from './faction-images/riverfolk.png'
 import vagabondImage from './faction-images/vagabond.png'
 import eyrieImage from './faction-images/eyrie.png'
 
-import {Avatar, Box, Button, ButtonGroup, Fab, Stack} from "@mui/material";
+import {Avatar, Box, Button, ButtonGroup, Container, Fab, Stack} from "@mui/material";
 
-const EYRIE = {name: "eyrie", image: eyrieImage};
-const CORVID = {name: "corvid", image: corvidImage};
-const ALLIANCE = {name: "alliance", image: allianceImage};
-const CULT = {name: "cult", image: cultImage};
-const DUCHY = {name: "duchy", image: duchyImage};
-const RIVERFOLK = {name: "riverfolk", image: riverfolkImage};
-const MARQUISE = {name: "marquise", image: marquiseImage};
-const VAGABOND = {name: "vagabond", image: vagabondImage};
+const EYRIE = {name: "eyrie", image: eyrieImage, nextPlayerChoosableFactions: []};
+const CORVID = {name: "corvid", image: corvidImage, nextPlayerChoosableFactions: [EYRIE]};
+const ALLIANCE = {name: "alliance", image: allianceImage, nextPlayerChoosableFactions: [CORVID, EYRIE]};
+const CULT = {name: "cult", image: cultImage, nextPlayerChoosableFactions: [CORVID, ALLIANCE]};
+const DUCHY = {name: "duchy", image: duchyImage, nextPlayerChoosableFactions: [CORVID, ALLIANCE, CULT]};
+const RIVERFOLK = {name: "riverfolk", image: riverfolkImage, nextPlayerChoosableFactions: [CORVID, ALLIANCE, CULT]};
+const MARQUISE = {name: "marquise", image: marquiseImage, nextPlayerChoosableFactions: [CORVID, ALLIANCE, CULT]};
+const VAGABOND = {name: "vagabond", image: vagabondImage, nextPlayerChoosableFactions: [CORVID, ALLIANCE, CULT]};
 
+let choosableFactions = [EYRIE, CORVID, ALLIANCE, CULT];
 
-let choosableFactions = [EYRIE, CORVID, ALLIANCE, CULT, DUCHY, RIVERFOLK, MARQUISE, VAGABOND];
-
+const NextPlayerFactionIndicators = ({nextPlayerChoosableFactions}) => {
+    return (
+        <>
+            {nextPlayerChoosableFactions.map(faction => (
+                <Fab size="small">
+                    <Avatar
+                        sx={{
+                            "& .MuiAvatar-img": {
+                                width: "60%"
+                            }
+                        }}
+                        imgProps={{
+                            sx: {
+                                objectFit: "contain",
+                            }
+                        }}
+                        src={faction.image}
+                    />
+                </Fab>
+            ))}
+        </>
+    );
+};
 
 const ChooseFactionButtons = () => {
     return (
         <>
             <Stack direction="row"
                    justifyContent="center">
-                {choosableFactions.map(choosableFaction => (
+                {choosableFactions.map(faction => (
                     <Stack>
                         <Fab>
                             <Avatar
+                                // sx={{width: "80%"}}
                                 imgProps={{sx: {objectFit: "contain"}}}
-                                src={choosableFaction.image}
+                                src={faction.image}
                             />
                         </Fab>
+                        <NextPlayerFactionIndicators
+                            nextPlayerChoosableFactions={faction.nextPlayerChoosableFactions}/>
                     </Stack>
                 ))}
             </Stack>
@@ -45,21 +70,28 @@ const ChooseFactionButtons = () => {
     );
 };
 
+const PlayerCountButtons = () => {
+    return (
+        <Box>
+            <ButtonGroup>
+                <Button>3</Button>
+                <Button>4</Button>
+                <Button>5</Button>
+                <Button>6</Button>
+            </ButtonGroup>
+        </Box>
+    )
+};
 
 function App() {
     return (
         <div className="App">
-            <Stack spacing={2}>
-                <Box>
-                    <ButtonGroup>
-                        <Button>3</Button>
-                        <Button>4</Button>
-                        <Button>5</Button>
-                        <Button>6</Button>
-                    </ButtonGroup>
-                </Box>
-                <ChooseFactionButtons/>
-            </Stack>
+            <Container>
+                <Stack spacing={2} justifyContent="center">
+                    <PlayerCountButtons/>
+                    <ChooseFactionButtons/>
+                </Stack>
+            </Container>
         </div>
     );
 }
