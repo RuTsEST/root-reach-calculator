@@ -86,7 +86,7 @@ const PlayerCountButtons = () => {
 function App() {
     return (
         <div className="App">
-            <Container>
+            <Container sx={{marginTop: 2}}>
                 <Stack spacing={2} justifyContent="center">
                     <PlayerCountButtons/>
                     <ChooseFactionButtons/>
