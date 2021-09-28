@@ -10,7 +10,7 @@ import riverfolkImage from './faction-images/riverfolk.png'
 import vagabondImage from './faction-images/vagabond.png'
 import eyrieImage from './faction-images/eyrie.png'
 
-import {Avatar, Box, Button, ButtonGroup, Container, Fab, Stack} from "@mui/material";
+import {Avatar, Box, Button, ButtonGroup, Container, Divider, Fab, Stack} from "@mui/material";
 
 const EYRIE = {name: "eyrie", image: eyrieImage, nextPlayerChoosableFactions: []};
 const CORVID = {name: "corvid", image: corvidImage, nextPlayerChoosableFactions: [EYRIE]};
@@ -53,14 +53,14 @@ const ChooseFactionButtons = () => {
             <Stack direction="row"
                    justifyContent="center">
                 {choosableFactions.map(faction => (
-                    <Stack>
+                    <Stack justifyContent="start" alignItems="center" spacing={1}>
                         <Fab>
                             <Avatar
-                                // sx={{width: "80%"}}
                                 imgProps={{sx: {objectFit: "contain"}}}
                                 src={faction.image}
                             />
                         </Fab>
+                        <Divider flexItem />
                         <NextPlayerFactionIndicators
                             nextPlayerChoosableFactions={faction.nextPlayerChoosableFactions}/>
                     </Stack>
