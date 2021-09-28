@@ -10,8 +10,7 @@ import riverfolkImage from './faction-images/riverfolk.png'
 import vagabondImage from './faction-images/vagabond.png'
 import eyrieImage from './faction-images/eyrie.png'
 
-import {Avatar, Box, Button, ButtonGroup, Card, CardContent, CardHeader, Container, Fab, Stack} from "@mui/material";
-import {CloudOffRounded} from "@mui/icons-material";
+import {Avatar, Box, Button, ButtonGroup, Fab, Stack} from "@mui/material";
 
 const EYRIE = {name: "eyrie", image: eyrieImage};
 const CORVID = {name: "corvid", image: corvidImage};
@@ -29,11 +28,17 @@ let choosableFactions = [EYRIE, CORVID, ALLIANCE, CULT, DUCHY, RIVERFOLK, MARQUI
 const ChooseFactionButtons = () => {
     return (
         <>
-            <Stack direction="row">
-                {choosableFactions.map(choosableFactions => (
-                    <Fab>
-                        <Avatar imgProps={{objectFit: "contain"}} src={choosableFactions.image} variant="string"/>
-                    </Fab>
+            <Stack direction="row"
+                   justifyContent="center">
+                {choosableFactions.map(choosableFaction => (
+                    <Stack>
+                        <Fab>
+                            <Avatar
+                                imgProps={{sx: {objectFit: "contain"}}}
+                                src={choosableFaction.image}
+                            />
+                        </Fab>
+                    </Stack>
                 ))}
             </Stack>
         </>
