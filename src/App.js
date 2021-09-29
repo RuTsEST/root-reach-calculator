@@ -1,19 +1,24 @@
 import './App.css';
 
-import {Container, Stack} from "@mui/material";
+import {CssBaseline, Stack} from "@mui/material";
 import {PlayerCountButtons} from "./components/PlayerCountButtons";
 import {ChooseFactionButtons} from "./components/ChooseFactionButtons";
 
 
 function App() {
     return (
-        <div className="App">
-            <Container sx={{marginTop: 2}}>
-                <Stack spacing={2} justifyContent="center">
-                    <PlayerCountButtons/>
-                    <ChooseFactionButtons/>
-                </Stack>
-            </Container>
+        <div className="App" style={{ height: "100%" }}>
+            <CssBaseline/>
+            <Stack
+                container
+                sx={{height: "100%"}}
+                justifyContent="space-around"
+                alignItems="center"
+            >
+                <h3>5/21</h3>
+                <ChooseFactionButtons/>
+                <PlayerCountButtons/>
+            </Stack>
         </div>
     );
 }

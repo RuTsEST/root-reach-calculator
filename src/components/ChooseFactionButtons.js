@@ -1,5 +1,4 @@
-import {Avatar, Divider, Fab, Stack} from "@mui/material";
-import {NextPlayerFactionIndicators} from "./NextPlayerFactionIndicators";
+import {Avatar, Badge, Fab, Grid} from "@mui/material";
 import eyrieImage from "../faction-images/eyrie.png";
 import corvidImage from "../faction-images/corvid.png";
 import allianceImage from "../faction-images/alliance.png";
@@ -9,40 +8,38 @@ import riverfolkImage from "../faction-images/riverfolk.png";
 import marquiseImage from "../faction-images/marquise.png";
 import vagabondImage from "../faction-images/vagabond.png";
 
-const EYRIE = {name: "eyrie", image: eyrieImage, nextPlayerChoosableFactions: []};
-const CORVID = {name: "corvid", image: corvidImage, nextPlayerChoosableFactions: [EYRIE]};
-const ALLIANCE = {name: "alliance", image: allianceImage, nextPlayerChoosableFactions: [CORVID, EYRIE]};
-const CULT = {name: "cult", image: cultImage, nextPlayerChoosableFactions: [CORVID, ALLIANCE]};
-// eslint-disable-next-line no-unused-vars
-const DUCHY = {name: "duchy", image: duchyImage, nextPlayerChoosableFactions: [CORVID, ALLIANCE, CULT]};
-// eslint-disable-next-line no-unused-vars
-const RIVERFOLK = {name: "riverfolk", image: riverfolkImage, nextPlayerChoosableFactions: [CORVID, ALLIANCE, CULT]};
-// eslint-disable-next-line no-unused-vars
-const MARQUISE = {name: "marquise", image: marquiseImage, nextPlayerChoosableFactions: [CORVID, ALLIANCE, CULT]};
-// eslint-disable-next-line no-unused-vars
-const VAGABOND = {name: "vagabond", image: vagabondImage, nextPlayerChoosableFactions: [CORVID, ALLIANCE, CULT]};
-
-let choosableFactions = [EYRIE, CORVID, ALLIANCE, CULT];
+const factions = {
+    marquise: {image: marquiseImage, reach: 10},
+    eyrie: {image: eyrieImage, reach: 7},
+    alliance: {image: allianceImage, reach: 3},
+    vagabond1: {image: vagabondImage, reach: 5},
+    riverfolk: {image: riverfolkImage, reach: 5},
+    cult: {image: cultImage, reach: 2},
+    corvid: {image: corvidImage, reach: 3},
+    duchy: {image: duchyImage, reach: 8},
+    vagabond2: {image: vagabondImage, reach: 2},
+};
 
 export const ChooseFactionButtons = () => {
     return (
-        <>
-            <Stack direction="row"
-                   justifyContent="center">
-                {choosableFactions.map(faction => (
-                    <Stack justifyContent="start" alignItems="center" spacing={1}>
-                        <Fab>
+        <Grid container columns={{xs: 3}} rowSpacing={6}>
+            {Object.values(factions).map(faction => (
+                <Grid item xs={1}>
+                    <Fab sx={{width: "7em", height: "7em"}}>
+                        <Badge
+                            badgeContent={
+                                <Avatar>{faction.reach}</Avatar>
+                            }
+                        >
                             <Avatar
+                                sx={{width: "4em", height: "4em"}}
                                 imgProps={{sx: {objectFit: "contain"}}}
                                 src={faction.image}
                             />
-                        </Fab>
-                        <Divider flexItem />
-                        <NextPlayerFactionIndicators
-                            nextPlayerChoosableFactions={faction.nextPlayerChoosableFactions}/>
-                    </Stack>
-                ))}
-            </Stack>
-        </>
+                        </Badge>
+                    </Fab>
+                </Grid>
+            ))}
+        </Grid>
     );
 };
