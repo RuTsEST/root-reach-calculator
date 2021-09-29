@@ -7,20 +7,21 @@ import duchyImage from "../faction-images/duchy.png";
 import riverfolkImage from "../faction-images/riverfolk.png";
 import marquiseImage from "../faction-images/marquise.png";
 import vagabondImage from "../faction-images/vagabond.png";
-
-const factions = {
-    marquise: {image: marquiseImage, reach: 10},
-    eyrie: {image: eyrieImage, reach: 7},
-    alliance: {image: allianceImage, reach: 3},
-    vagabond1: {image: vagabondImage, reach: 5},
-    riverfolk: {image: riverfolkImage, reach: 5},
-    cult: {image: cultImage, reach: 2},
-    corvid: {image: corvidImage, reach: 3},
-    duchy: {image: duchyImage, reach: 8},
-    vagabond2: {image: vagabondImage, reach: 2},
-};
+import * as React from 'react';
 
 export const ChooseFactionButtons = () => {
+    const [factions, setFactions] = React.useState({
+        marquise: {image: marquiseImage, reach: 10},
+        eyrie: {image: eyrieImage, reach: 7},
+        alliance: {image: allianceImage, reach: 3},
+        vagabond1: {image: vagabondImage, reach: 5},
+        riverfolk: {image: riverfolkImage, reach: 5},
+        cult: {image: cultImage, reach: 2},
+        corvid: {image: corvidImage, reach: 3},
+        duchy: {image: duchyImage, reach: 8},
+        vagabond2: {image: vagabondImage, reach: 2},
+    });
+
     return (
         <Grid container columns={{xs: 3}} rowSpacing={6}>
             {Object.values(factions).map(faction => (
