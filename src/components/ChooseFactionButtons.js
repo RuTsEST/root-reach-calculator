@@ -1,4 +1,4 @@
-import {Avatar, Badge, Fab, Grid} from "@mui/material";
+import {Grid} from "@mui/material";
 import eyrieImage from "../faction-images/eyrie.png";
 import corvidImage from "../faction-images/corvid.png";
 import allianceImage from "../faction-images/alliance.png";
@@ -8,8 +8,6 @@ import riverfolkImage from "../faction-images/riverfolk.png";
 import marquiseImage from "../faction-images/marquise.png";
 import vagabondImage from "../faction-images/vagabond.png";
 import * as React from 'react';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import NotInterestedOutlinedIcon from '@mui/icons-material/NotInterestedOutlined';
 import {IS_AVAILABLE, IS_BANNED, IS_NOT_AVAILABLE, IS_PICKED} from "../constants";
 import {ChooseFactionButton} from "./ChooseFactionButton";
 
@@ -21,16 +19,27 @@ export const ChooseFactionButtons = () => {
         alliance: {name: "alliance", image: allianceImage, reach: 3, status: IS_BANNED},
         vagabond1: {name: "vagabond1", image: vagabondImage, reach: 5, status: IS_AVAILABLE},
         riverfolk: {name: "riverfolk", image: riverfolkImage, reach: 5, status: IS_NOT_AVAILABLE},
-        cult: {name: "cult", image: cultImage, reach: 2},
-        corvid: {name: "corvid", image: corvidImage, reach: 3},
-        duchy: {name: "duchy", image: duchyImage, reach: 8},
-        vagabond2: {name: "vagabond2", image: vagabondImage, reach: 2},
+        cult: {name: "cult", image: cultImage, reach: 2, status: IS_PICKED},
+        corvid: {name: "corvid", image: corvidImage, reach: 3, status: IS_BANNED},
+        duchy: {name: "duchy", image: duchyImage, reach: 8, status: IS_AVAILABLE},
+        vagabond2: {name: "vagabond2", image: vagabondImage, reach: 2, status: IS_NOT_AVAILABLE},
     });
 
     return (
         <Grid container columns={{xs: 3}} rowSpacing={6}>
-            {Object.values(factions).map((faction) => (
-                <Grid item xs={1} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+            {Object.values(factions).map((faction, index) => (
+                <Grid
+                    item
+                    xs={1}
+                    sx={
+                        {
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center"
+                        }
+                    }
+                    key={index}
+                >
                     <ChooseFactionButton faction={faction}/>
                 </Grid>
             ))}

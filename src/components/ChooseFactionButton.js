@@ -1,38 +1,8 @@
 import {Avatar, Badge, Fab} from "@mui/material";
 import * as React from "react";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import NotInterestedOutlinedIcon from "@mui/icons-material/NotInterestedOutlined";
-import {IS_BANNED, IS_NOT_AVAILABLE, IS_PICKED} from "../constants";
+import {IS_NOT_AVAILABLE} from "../constants";
+import {FactionStatusOverlay} from "./FactionStatusOverlay";
 
-const FactionStatusOverlay = ({status}) => {
-    console.log(status);
-
-    let sx = {
-        position: "absolute",
-        zIndex: "1",
-        width: "85%",
-        height: "85%"
-    }
-
-    switch (status) {
-        case IS_PICKED:
-            return (
-                <CheckCircleOutlineIcon
-                    color="success"
-                    sx={sx}
-                />
-            )
-        case IS_BANNED:
-            return (
-                <NotInterestedOutlinedIcon
-                    color="error"
-                    sx={sx}
-                />
-            )
-        default:
-            return (<></>)
-    }
-}
 
 const handleFactionClick = (clickedFaction) => {
     console.log(clickedFaction);
