@@ -1,13 +1,13 @@
 import './App.css';
 
-import {CssBaseline, Stack} from "@mui/material";
+import {Container, CssBaseline, Stack} from "@mui/material";
 import {PlayerCountButtons} from "./components/PlayerCountButtons";
 import {ChooseFactionButtons} from "./components/ChooseFactionButtons";
 
 
 function App() {
     return (
-        <div className="App" style={{ height: "100%" }}>
+        <Container maxWidth="sm" className="App" style={{height: "100%"}}>
             <CssBaseline/>
             <Stack
                 container
@@ -19,7 +19,7 @@ function App() {
                 <ChooseFactionButtons/>
                 <PlayerCountButtons/>
             </Stack>
-        </div>
+        </Container>
     );
 }
 
