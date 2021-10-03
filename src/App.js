@@ -32,7 +32,7 @@ function App() {
                 alignItems="center"
             >
                 <ReachIndicator reach={reach} requiredReach={requiredReach}/>
-                <ChooseFactionButtons/>
+                <ChooseFactionButtons setReach={setReach}/>
                 <PlayerCountButtons
                     requiredReach={requiredReach}
                     handlePlayerCountButtonPress={handlePlayerCountButtonPress}

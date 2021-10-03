@@ -11,19 +11,57 @@ import * as React from 'react';
 import {IS_AVAILABLE, IS_BANNED, IS_NOT_AVAILABLE, IS_PICKED} from "../constants";
 import {ChooseFactionButton} from "./ChooseFactionButton";
 
-export const ChooseFactionButtons = () => {
+export const ChooseFactionButtons = ({setReach}) => {
+    const handleFactionClick = (factionName) => {
+        if (factions[factionName].status === IS_AVAILABLE) {
+            setFactions({
+                ...factions,
+                [factionName]: {
+                    ...factions[factionName],
+                    status: IS_PICKED
+                }
+            })
+        } else if (factions[factionName].status === IS_PICKED) {
+            setFactions({
+                ...factions,
+                [factionName]: {
+                    ...factions[factionName],
+                    status: IS_BANNED
+                }
+            })
+        } else if (factions[factionName].status === IS_BANNED) {
+            setFactions({
+                ...factions,
+                [factionName]: {
+                    ...factions[factionName],
+                    status: IS_AVAILABLE
+                }
+            })
+        }
+    }
 
     const [factions, setFactions] = React.useState({
-        marquise: {name: "marquise", image: marquiseImage, reach: 10},
-        eyrie: {name: "eyrie", image: eyrieImage, reach: 7, status: IS_PICKED},
-        alliance: {name: "alliance", image: allianceImage, reach: 3, status: IS_BANNED},
+        marquise: {name: "marquise", image: marquiseImage, reach: 10, status: IS_AVAILABLE},
+        eyrie: {name: "eyrie", image: eyrieImage, reach: 7, status: IS_AVAILABLE},
+        alliance: {name: "alliance", image: allianceImage, reach: 3, status: IS_AVAILABLE},
         vagabond1: {name: "vagabond1", image: vagabondImage, reach: 5, status: IS_AVAILABLE},
-        riverfolk: {name: "riverfolk", image: riverfolkImage, reach: 5, status: IS_NOT_AVAILABLE},
-        cult: {name: "cult", image: cultImage, reach: 2, status: IS_PICKED},
-        corvid: {name: "corvid", image: corvidImage, reach: 3, status: IS_BANNED},
+        riverfolk: {name: "riverfolk", image: riverfolkImage, reach: 5, status: IS_AVAILABLE},
+        cult: {name: "cult", image: cultImage, reach: 2, status: IS_AVAILABLE},
+        corvid: {name: "corvid", image: corvidImage, reach: 3, status: IS_AVAILABLE},
         duchy: {name: "duchy", image: duchyImage, reach: 8, status: IS_AVAILABLE},
         vagabond2: {name: "vagabond2", image: vagabondImage, reach: 2, status: IS_NOT_AVAILABLE},
     });
+
+    React.useEffect(() => {
+        let reach = Object.values(factions)
+            .filter((faction) => faction.status === IS_PICKED)
+            .map((faction) => faction.reach)
+            .reduce((total, currentFactionReach) => total + currentFactionReach, 0);
+
+        setReach(reach);
+
+
+    }, [factions])
 
     return (
         <Grid container columns={{xs: 3}} rowSpacing={6}>
@@ -40,7 +78,10 @@ export const ChooseFactionButtons = () => {
                     }
                     key={index}
                 >
-                    <ChooseFactionButton faction={faction}/>
+                    <ChooseFactionButton
+                        handleFactionClick={handleFactionClick}
+                        faction={faction}
+                    />
                 </Grid>
             ))}
         </Grid>

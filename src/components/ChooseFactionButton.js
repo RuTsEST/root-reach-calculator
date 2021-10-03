@@ -1,14 +1,10 @@
 import {Avatar, Badge, Fab} from "@mui/material";
 import * as React from "react";
-import {IS_NOT_AVAILABLE} from "../constants";
+import {IS_AVAILABLE, IS_BANNED, IS_NOT_AVAILABLE, IS_PICKED} from "../constants";
 import {FactionStatusOverlay} from "./FactionStatusOverlay";
 
 
-const handleFactionClick = (clickedFaction) => {
-    console.log(clickedFaction);
-}
-
-export const ChooseFactionButton = ({faction}) => {
+export const ChooseFactionButton = ({faction, handleFactionClick}) => {
     const widthAndHeight = faction.status === IS_NOT_AVAILABLE ? "4em" : "7em"
     const badgeTopAndRight = faction.status === IS_NOT_AVAILABLE ? "0.5em" : "1em"
     const badgeFontSize = faction.status === IS_NOT_AVAILABLE ? "small" : "large";
