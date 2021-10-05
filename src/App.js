@@ -41,6 +41,8 @@ function App() {
                 <ChooseFactionButtons
                     playerCount={playerCount}
                     setReach={setReach}
+                    reach={reach}
+                    requiredReach={requiredReach}
                 />
                 <PlayerCountButtons
                     requiredReach={requiredReach}

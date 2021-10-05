@@ -11,7 +11,7 @@ import * as React from 'react';
 import {IS_AVAILABLE, IS_BANNED, IS_NOT_AVAILABLE, IS_PICKED} from "../constants";
 import {ChooseFactionButton} from "./ChooseFactionButton";
 
-export const ChooseFactionButtons = ({playerCount, setReach}) => {
+export const ChooseFactionButtons = ({playerCount, setReach, requiredReach}) => {
     const [factionsPicked, setFactionsPicked] = React.useState(0);
     const [factions, setFactions] = React.useState({
         marquise: {
@@ -74,6 +74,64 @@ export const ChooseFactionButtons = ({playerCount, setReach}) => {
         console.log('factionsPicked', factionsPicked);
     }, [factionsPicked])
 
+    const setAvailableFactions = (previousFactions) => {
+        const factions = {...previousFactions};
+        const pickedFactions = Object.values(factions).filter((faction) => faction.status === IS_PICKED)
+
+        // If the number of picked factions >= number of players in game then set every not picked and not banned faction as disabled
+        if (pickedFactions.length >= playerCount) {
+
+            for (const key in factions) {
+                if (!(factions[key].status === IS_PICKED || factions[key].status === IS_BANNED)) {
+                    factions[key].status = IS_NOT_AVAILABLE
+                }
+            }
+
+            return factions;
+        }
+
+        // Filter out picked and banned factions
+        let sortedFactionArray = Object.values(factions)
+            .filter((faction) => !(faction.status === IS_PICKED || faction.status === IS_BANNED))
+            .sort((faction1, faction2) => {
+                if (faction1.reach > faction2.reach) {
+                    return -1;
+                }
+                if (faction1.reach < faction2.reach) {
+                    return 1;
+                }
+                return 0;
+            });
+
+        const playersStillToPick = playerCount - pickedFactions.length;
+
+        const reach = Object.values(factions)
+            .filter((faction) => faction.status === IS_PICKED)
+            .map((faction) => faction.reach)
+            .reduce((total, currentFactionReach) => total + currentFactionReach, 0);
+
+        for (const factionsKey in factions) {
+            if (factions[factionsKey].status === IS_PICKED || factions[factionsKey].status === IS_BANNED) {
+                continue;
+            }
+
+            let sortedFactionArrayWithoutFaction = sortedFactionArray.filter((faction) => faction.name !== factionsKey)
+            let maxReachForFaction = factions[factionsKey].reach;
+            for (let i = 0; i < playersStillToPick - 1; i++) {
+                maxReachForFaction += sortedFactionArrayWithoutFaction[i].reach
+            }
+            console.log(factionsKey, maxReachForFaction);
+
+            if (reach + maxReachForFaction < requiredReach) {
+                factions[factionsKey].status = IS_NOT_AVAILABLE
+            } else {
+                factions[factionsKey].status = IS_AVAILABLE
+            }
+        }
+
+        return factions;
+    }
+
     const handleFactionClick = (factionName) => {
         let newFactions = {...factions};
 
@@ -90,6 +148,8 @@ export const ChooseFactionButtons = ({playerCount, setReach}) => {
             default:
                 break;
         }
+
+        newFactions = setAvailableFactions(newFactions);
 
         setFactions(newFactions);
     }
