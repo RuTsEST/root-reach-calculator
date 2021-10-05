@@ -15,12 +15,18 @@ const ReachIndicator = ({reach, requiredReach}) => {
 function App() {
     const [reach, setReach] = React.useState(0);
     const [requiredReach, setRequiredReach] = React.useState(21);
+    const [playerCount, setPlayerCount] = React.useState(4);
 
     const handlePlayerCountButtonPress = (event, newRequiredReach) => {
         if (newRequiredReach != null) {
             setRequiredReach(newRequiredReach)
+            setPlayerCount(event.target.innerText)
         }
     }
+
+    React.useEffect(() => {
+        console.log('playerCount', playerCount);
+    }, [playerCount])
 
     return (
         <Container maxWidth="sm" className="App" style={{height: "100%"}}>
@@ -32,7 +38,10 @@ function App() {
                 alignItems="center"
             >
                 <ReachIndicator reach={reach} requiredReach={requiredReach}/>
-                <ChooseFactionButtons setReach={setReach}/>
+                <ChooseFactionButtons
+                    playerCount={playerCount}
+                    setReach={setReach}
+                />
                 <PlayerCountButtons
                     requiredReach={requiredReach}
                     handlePlayerCountButtonPress={handlePlayerCountButtonPress}

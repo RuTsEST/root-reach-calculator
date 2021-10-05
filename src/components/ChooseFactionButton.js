@@ -1,6 +1,6 @@
 import {Avatar, Badge, Fab} from "@mui/material";
 import * as React from "react";
-import {IS_AVAILABLE, IS_BANNED, IS_NOT_AVAILABLE, IS_PICKED} from "../constants";
+import {IS_NOT_AVAILABLE} from "../constants";
 import {FactionStatusOverlay} from "./FactionStatusOverlay";
 
 
