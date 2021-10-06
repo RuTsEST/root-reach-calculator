@@ -36,19 +36,19 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach}) => 
             name: "vagabond1",
             image: vagabondImage,
             reach: 5,
-            status: IS_AVAILABLE
+            status: IS_NOT_AVAILABLE
         },
         riverfolk: {
             name: "riverfolk",
             image: riverfolkImage,
             reach: 5,
-            status: IS_AVAILABLE
+            status: IS_NOT_AVAILABLE
         },
         cult: {
             name: "cult",
             image: cultImage,
             reach: 2,
-            status: IS_AVAILABLE
+            status: IS_NOT_AVAILABLE
         },
         corvid: {
             name: "corvid",
@@ -166,7 +166,7 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach}) => 
 
         setReach(reach);
         setFactionsPicked(newFactionsPicked);
-    }, [factions])
+    }, [setReach, factions])
 
     return (
         <Grid container columns={{xs: 3}} rowSpacing={6}>
@@ -178,7 +178,8 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach}) => 
                         {
                             display: "flex",
                             justifyContent: "center",
-                            alignItems: "center"
+                            alignItems: "center",
+                            height: "9em"
                         }
                     }
                     key={index}
