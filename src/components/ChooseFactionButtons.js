@@ -121,6 +121,11 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach}) => 
                 continue;
             }
 
+            if (factions[factionsKey].name === "vagabond2" && (factions.vagabond1.status !== IS_PICKED)){
+                factions[factionsKey].status = IS_NOT_AVAILABLE;
+                continue
+            }
+
             let sortedFactionArrayWithoutFaction = sortedFactionArray.filter((faction) => faction.name !== factionsKey)
             let maxReachForFaction = factions[factionsKey].reach;
             for (let i = 0; i < playersStillToPick - 1; i++) {
