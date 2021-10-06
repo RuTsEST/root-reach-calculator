@@ -74,6 +74,12 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach}) => 
         console.log('factionsPicked', factionsPicked);
     }, [factionsPicked])
 
+    React.useEffect(() => {
+        const recalculatedFactions = setAvailableFactions(factions);
+
+        setFactions(recalculatedFactions);
+    }, [requiredReach])
+
     const setAvailableFactions = (previousFactions) => {
         const factions = {...previousFactions};
         const pickedFactions = Object.values(factions).filter((faction) => faction.status === IS_PICKED)
