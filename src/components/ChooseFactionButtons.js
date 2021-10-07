@@ -13,7 +13,6 @@ import {IS_AVAILABLE, IS_BANNED, IS_NOT_AVAILABLE, IS_PICKED} from "../constants
 import {ChooseFactionButton} from "./ChooseFactionButton";
 
 export const ChooseFactionButtons = ({playerCount, setReach, requiredReach}) => {
-    const [factionsPicked, setFactionsPicked] = React.useState(0);
     const [factions, setFactions] = React.useState({
         marquise: {
             name: "marquise",
@@ -72,10 +71,6 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach}) => 
     });
 
     React.useEffect(() => {
-        console.log('factionsPicked', factionsPicked);
-    }, [factionsPicked])
-
-    React.useEffect(() => {
         const recalculatedFactions = setAvailableFactions(factions);
 
         setFactions(recalculatedFactions);
@@ -132,7 +127,6 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach}) => 
             for (let i = 0; i < playersStillToPick - 1; i++) {
                 maxReachForFaction += sortedFactionArrayWithoutFaction[i].reach
             }
-            console.log(factionsKey, maxReachForFaction);
 
             if (reach + maxReachForFaction < requiredReach) {
                 factions[factionsKey].status = IS_NOT_AVAILABLE
@@ -172,12 +166,7 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach}) => 
             .map((faction) => faction.reach)
             .reduce((total, currentFactionReach) => total + currentFactionReach, 0);
 
-        const newFactionsPicked = Object.values(factions)
-            .filter((faction) => faction.status === IS_PICKED)
-            .length
-
         setReach(reach);
-        setFactionsPicked(newFactionsPicked);
     }, [setReach, factions])
 
     return (

@@ -24,10 +24,6 @@ function App() {
         }
     }
 
-    React.useEffect(() => {
-        console.log('playerCount', playerCount);
-    }, [playerCount])
-
     return (
         <Container maxWidth="sm" className="App" style={{height: "100%"}}>
             <CssBaseline/>
