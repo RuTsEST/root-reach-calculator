@@ -8,7 +8,7 @@ import {ChooseFactionButtons} from "./components/ChooseFactionButtons";
 
 const ReachIndicator = ({reach, requiredReach}) => {
     return(
-        <h3>{reach}/{requiredReach}+</h3>
+        <h3 data-cy={`reach-indicator`}>{reach}/{requiredReach}+</h3>
     )
 }
 

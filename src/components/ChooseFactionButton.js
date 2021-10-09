@@ -15,6 +15,7 @@ export const ChooseFactionButton = ({faction, handleFactionClick}) => {
              value={faction.reach}
              sx={{width: widthAndHeight, height: widthAndHeight, opacity: opacity}}
              disabled={faction.status === IS_NOT_AVAILABLE}
+             data-cy={faction.name}
         >
             <Badge
                 badgeContent={
