@@ -25,7 +25,9 @@ function App() {
     }
 
     return (
-        <Container maxWidth="sm" className="App" style={{height: "100%"}}>
+        <Container maxWidth="sm" className="App"
+                   sx={{minWidth: "23em", height: "100%"}}
+        >
             <CssBaseline/>
             <Stack
                 container

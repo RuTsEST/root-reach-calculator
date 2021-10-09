@@ -125,7 +125,9 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach}) => 
             let sortedFactionArrayWithoutFaction = sortedFactionArray.filter((faction) => faction.name !== factionsKey)
             let maxReachForFaction = factions[factionsKey].reach;
             for (let i = 0; i < playersStillToPick - 1; i++) {
-                maxReachForFaction += sortedFactionArrayWithoutFaction[i].reach
+                if (sortedFactionArrayWithoutFaction[i]) {
+                    maxReachForFaction += sortedFactionArrayWithoutFaction[i].reach
+                }
             }
 
             if (reach + maxReachForFaction < requiredReach) {
