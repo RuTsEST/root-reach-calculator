@@ -1,6 +1,6 @@
 import {Avatar, Badge, Fab} from "@mui/material";
 import * as React from "react";
-import {IS_AVAILABLE, IS_BANNED, IS_NOT_AVAILABLE, IS_PICKED} from "../constants";
+import {IS_BANNED, IS_NOT_AVAILABLE, IS_PICKED} from "../constants";
 import {FactionStatusOverlay} from "./FactionStatusOverlay";
 
 
@@ -23,14 +23,14 @@ export const ChooseFactionButton = ({faction, handleFactionClick}) => {
     return (
         <Fab onClick={() => handleFactionClick(faction.name)}
              value={faction.reach}
-             sx={{width: widthAndHeight, height: widthAndHeight, opacity: opacity, backgroundColor: fabColor}}
+             sx={{width: widthAndHeight, height: widthAndHeight, opacity: opacity}}
              disabled={faction.status === IS_NOT_AVAILABLE}
              data-cy={faction.name}
         >
             <Badge
                 badgeContent={
                     <Avatar
-                        sx={{width: "2em", height: "2em", fontSize: badgeFontSize}}
+                        sx={{width: "2em", height: "2em", fontSize: badgeFontSize, backgroundColor: fabColor}}
                     >
                         {faction.reach}
                     </Avatar>
