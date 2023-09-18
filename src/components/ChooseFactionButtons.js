@@ -186,7 +186,7 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach}) => 
     }, [setReach, factions])
 
     return (
-        <Grid container columns={{xs: 3}} rowSpacing={6}>
+        <Grid container columns={{xs: 3}} rowSpacing={6} justifyContent={'center'}>
             {Object.values(factions).map((faction, index) => (
                 <Grid
                     item
