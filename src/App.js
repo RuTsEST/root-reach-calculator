@@ -32,7 +32,7 @@ function App() {
             <Stack
                 container
                 sx={{height: "100%"}}
-                justifyContent="space-around"
+                justifyContent="center"
                 alignItems="center"
             >
                 <ReachIndicator reach={reach} requiredReach={requiredReach}/>
