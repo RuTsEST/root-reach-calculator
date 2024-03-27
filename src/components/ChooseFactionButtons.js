@@ -8,6 +8,8 @@ import riverfolkImage from "../faction-images/riverfolk.png";
 import marquiseImage from "../faction-images/marquise.png";
 import vagabondImage from "../faction-images/vagabond.png";
 import vagabond2Image from "../faction-images/vagabond2.png";
+import hundredsImage from "../faction-images/hundreds.png";
+import keepersImage from "../faction-images/keepers.png";
 import * as React from 'react';
 import {IS_AVAILABLE, IS_BANNED, IS_NOT_AVAILABLE, IS_PICKED} from "../constants";
 import {ChooseFactionButton} from "./ChooseFactionButton";
@@ -68,6 +70,18 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach}) => 
             reach: 2,
             status: IS_NOT_AVAILABLE
         },
+        hundreds: {
+            name: "hundreds",
+            image: hundredsImage,
+            reach: 9,
+            status: IS_AVAILABLE
+        },
+        keepers: {
+            name: "keepers",
+            image: keepersImage,
+            reach: 8,
+            status: IS_AVAILABLE
+        }
     });
 
     React.useEffect(() => {
@@ -172,7 +186,7 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach}) => 
     }, [setReach, factions])
 
     return (
-        <Grid container columns={{xs: 3}} rowSpacing={6}>
+        <Grid container columns={{xs: 3}} rowSpacing={6} justifyContent={'center'}>
             {Object.values(factions).map((faction, index) => (
                 <Grid
                     item
