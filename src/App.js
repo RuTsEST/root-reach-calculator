@@ -8,7 +8,7 @@ import {ChooseFactionButtons} from "./components/ChooseFactionButtons";
 
 const ReachIndicator = ({reach, requiredReach}) => {
     return(
-        <h3 data-cy={`reach-indicator`}>{reach}/{requiredReach}+</h3>
+        <h3 style={{paddingBottom:"20px"}} data-cy={`reach-indicator`}>{reach}/{requiredReach}+</h3>
     )
 }
 
@@ -32,7 +32,7 @@ function App() {
             <Stack
                 container
                 sx={{height: "100%"}}
-                justifyContent="center"
+                justifyContent="flex-start"
                 alignItems="center"
             >
                 <ReachIndicator reach={reach} requiredReach={requiredReach}/>
