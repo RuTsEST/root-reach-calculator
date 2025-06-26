@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/root-reach-calculator/static/css/main.5739ad41.chunk.css",
-    "main.js": "/root-reach-calculator/static/js/main.e91a0902.chunk.js",
-    "main.js.map": "/root-reach-calculator/static/js/main.e91a0902.chunk.js.map",
-    "runtime-main.js": "/root-reach-calculator/static/js/runtime-main.ef4c7e2e.js",
-    "runtime-main.js.map": "/root-reach-calculator/static/js/runtime-main.ef4c7e2e.js.map",
-    "static/js/2.87d1d37f.chunk.js": "/root-reach-calculator/static/js/2.87d1d37f.chunk.js",
-    "static/js/2.87d1d37f.chunk.js.map": "/root-reach-calculator/static/js/2.87d1d37f.chunk.js.map",
-    "static/js/3.043209f4.chunk.js": "/root-reach-calculator/static/js/3.043209f4.chunk.js",
-    "static/js/3.043209f4.chunk.js.map": "/root-reach-calculator/static/js/3.043209f4.chunk.js.map",
+    "main.css": "/root-reach-calculator/static/css/main.7d180cbf.chunk.css",
+    "main.js": "/root-reach-calculator/static/js/main.dc120782.chunk.js",
+    "main.js.map": "/root-reach-calculator/static/js/main.dc120782.chunk.js.map",
+    "runtime-main.js": "/root-reach-calculator/static/js/runtime-main.249e92ed.js",
+    "runtime-main.js.map": "/root-reach-calculator/static/js/runtime-main.249e92ed.js.map",
+    "static/js/2.8efcda93.chunk.js": "/root-reach-calculator/static/js/2.8efcda93.chunk.js",
+    "static/js/2.8efcda93.chunk.js.map": "/root-reach-calculator/static/js/2.8efcda93.chunk.js.map",
+    "static/js/3.a11df7c3.chunk.js": "/root-reach-calculator/static/js/3.a11df7c3.chunk.js",
+    "static/js/3.a11df7c3.chunk.js.map": "/root-reach-calculator/static/js/3.a11df7c3.chunk.js.map",
     "index.html": "/root-reach-calculator/index.html",
-    "static/css/main.5739ad41.chunk.css.map": "/root-reach-calculator/static/css/main.5739ad41.chunk.css.map",
-    "static/js/2.87d1d37f.chunk.js.LICENSE.txt": "/root-reach-calculator/static/js/2.87d1d37f.chunk.js.LICENSE.txt",
+    "static/css/main.7d180cbf.chunk.css.map": "/root-reach-calculator/static/css/main.7d180cbf.chunk.css.map",
+    "static/js/2.8efcda93.chunk.js.LICENSE.txt": "/root-reach-calculator/static/js/2.8efcda93.chunk.js.LICENSE.txt",
     "static/media/alliance.e806127f.png": "/root-reach-calculator/static/media/alliance.e806127f.png",
     "static/media/corvid.d2562a48.png": "/root-reach-calculator/static/media/corvid.d2562a48.png",
     "static/media/cult.4c81f45b.png": "/root-reach-calculator/static/media/cult.4c81f45b.png",
@@ -25,9 +25,9 @@
     "static/media/vagabond2.89ede692.png": "/root-reach-calculator/static/media/vagabond2.89ede692.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.ef4c7e2e.js",
-    "static/js/2.87d1d37f.chunk.js",
-    "static/css/main.5739ad41.chunk.css",
-    "static/js/main.e91a0902.chunk.js"
+    "static/js/runtime-main.249e92ed.js",
+    "static/js/2.8efcda93.chunk.js",
+    "static/css/main.7d180cbf.chunk.css",
+    "static/js/main.dc120782.chunk.js"
   ]
 }
