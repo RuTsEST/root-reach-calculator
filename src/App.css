@@ -44,9 +44,9 @@
 .MuiStack-root {
   justify-content: center;
   padding-top: 1rem;
-  h4 {
-    line-height: 0;
-  }
+}
+.container h4 {
+  line-height: 0;
 }
 div.container {
   background-color: rgb(234, 234, 236);
