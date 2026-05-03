@@ -1,9 +1,9 @@
 import './App.css';
 import * as React from "react";
-
-import {Container, CssBaseline, Stack, ToggleButton, ToggleButtonGroup } from "@mui/material";
-import {PlayerCountButtons} from "./components/PlayerCountButtons";
-import {ChooseFactionButtons} from "./components/ChooseFactionButtons";
+import { Box, CssBaseline, IconButton, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { PlayerCountButtons } from "./components/PlayerCountButtons";
+import { ChooseFactionButtons } from "./components/ChooseFactionButtons";
 
 const ReachIndicator = ({ reach, requiredReach }) => {
     const isMet = reach >= requiredReach;
@@ -43,10 +43,10 @@ function App() {
     const [requiredReach, setRequiredReach] = React.useState(21);
     const [playerCount, setPlayerCount] = React.useState(4);
     const [selectedValue, setSelectedValue] = React.useState('player4');
-
     const [isBanMode, setIsBanMode] = React.useState(false);
+    const [resetKey, setResetKey] = React.useState(0);
 
-    const handleToggleButtonChange = (event, newValue) => {
+    const handleToggleButtonChange = React.useCallback((event, newValue) => {
         if (newValue !== null) {
             const values = idToValuesMap[newValue];
             if (values) {
@@ -55,41 +55,46 @@ function App() {
                 setPlayerCount(values.playerCount);
             }
         }
-    }
+    }, []);
+
+    const handleReset = () => {
+        setResetKey(k => k + 1);
+    };
 
     return (
-        <Container maxWidth="sm" className="App" sx={{ minWidth: "320px", height: "100%" }}>
-            <CssBaseline/>
-            <Stack
-                container
-                sx={{height: "100%"}}
-                justifyContent="flex-start"
-                alignItems="center"
-            >
-                <div className="reach-banner">
-                    <ToggleButtonGroup
-                        exclusive
-                        value={isBanMode ? 'ban' : 'pick'}
-                        onChange={(_, v) => { if (v !== null) setIsBanMode(v === 'ban'); }}
-                    >
-                        <ToggleButton value='ban'>Ban</ToggleButton>
-                        <ToggleButton value='pick'>Pick</ToggleButton>
-                    </ToggleButtonGroup>
-                    <ReachIndicator reach={reach} requiredReach={requiredReach} />
-                </div>
+        <Box sx={{ height: '100dvh', display: 'flex', flexDirection: 'column', maxWidth: 'sm', margin: '0 auto', minWidth: '320px' }}>
+            <CssBaseline />
+            <Box className="app-header">
+                <ToggleButtonGroup
+                    exclusive
+                    value={isBanMode ? 'ban' : 'pick'}
+                    onChange={(_, v) => { if (v !== null) setIsBanMode(v === 'ban'); }}
+                >
+                    <ToggleButton value='ban'>Ban</ToggleButton>
+                    <ToggleButton value='pick'>Pick</ToggleButton>
+                </ToggleButtonGroup>
+                <ReachIndicator reach={reach} requiredReach={requiredReach} />
+                <IconButton onClick={handleReset} size="small" aria-label="reset">
+                    <RefreshIcon />
+                </IconButton>
+            </Box>
+            <Box sx={{ flex: 1, overflow: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ChooseFactionButtons
+                    key={resetKey}
                     playerCount={playerCount}
                     setReach={setReach}
                     reach={reach}
                     requiredReach={requiredReach}
                     isBanMode={isBanMode}
                 />
+            </Box>
+            <Box className="app-footer">
                 <PlayerCountButtons
                     selectedValue={selectedValue}
                     handleToggleButtonChange={handleToggleButtonChange}
                 />
-            </Stack>
-        </Container>
+            </Box>
+        </Box>
     );
 }
 
