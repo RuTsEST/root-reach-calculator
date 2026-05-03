@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {Stack, ToggleButton, ToggleButtonGroup} from "@mui/material";
+import {Divider, Stack, ToggleButton, ToggleButtonGroup} from "@mui/material";
 
 export const PlayerCountButtons = ({selectedValue, handleToggleButtonChange}) => {
     return (
         <Stack justifyContent="center">
-            <div class="container">
+            <div className="container">
                 <h4>Players</h4>
                 <ToggleButtonGroup 
                     exclusive 
@@ -18,7 +18,8 @@ export const PlayerCountButtons = ({selectedValue, handleToggleButtonChange}) =>
                     <ToggleButton value='player6'>6</ToggleButton>
                 </ToggleButtonGroup>
             </div>
-            <div class="container">
+            <Divider sx={{ my: 1 }}>vs Clockwork</Divider>
+            <div className="container">
                 <h4>1 Clockwork</h4>
                 <ToggleButtonGroup 
                     exclusive 
@@ -31,7 +32,7 @@ export const PlayerCountButtons = ({selectedValue, handleToggleButtonChange}) =>
                     <ToggleButton value='1clockwork4'>4</ToggleButton>
                 </ToggleButtonGroup>
             </div>
-            <div class="container">
+            <div className="container">
                 <h4>2 Clockworks</h4>
                 <ToggleButtonGroup 
                     exclusive 

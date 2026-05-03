@@ -13,7 +13,7 @@ const getFactionButtonColor = (faction) => {
     }
 }
 
-export const ChooseFactionButton = ({faction, handleFactionClick, disableFaction}) => {
+export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) => {
     const widthAndHeight = faction.status === IS_NOT_AVAILABLE ? "4em" : "7em"
     const badgeTopAndRight = faction.status === IS_NOT_AVAILABLE ? "0.5em" : "1em"
     const badgeFontSize = faction.status === IS_NOT_AVAILABLE ? "small" : "large";
@@ -38,7 +38,7 @@ export const ChooseFactionButton = ({faction, handleFactionClick, disableFaction
                     width: "100%", height: "100%", alignItems: "center", justifyContent: "center"
                 }}
             >
-                <FactionStatusOverlay status={faction.status} disableFaction={disableFaction} />
+                <FactionStatusOverlay status={faction.status} />
                 <Avatar
                     sx={{width: "90%", height: "90%"}}
                     imgProps={{sx: {objectFit: "contain"}}}

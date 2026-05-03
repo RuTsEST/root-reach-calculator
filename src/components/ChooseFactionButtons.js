@@ -14,7 +14,8 @@ import * as React from 'react';
 import {IS_AVAILABLE, IS_BANNED, IS_NOT_AVAILABLE, IS_PICKED} from "../constants";
 import {ChooseFactionButton} from "./ChooseFactionButton";
 
-export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, disableFaction}) => { const [factions, setFactions] = React.useState({
+export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, isBanMode}) => {
+    const [factions, setFactions] = React.useState({
         marquise: {
             name: "marquise",
             image: marquiseImage,
@@ -157,8 +158,8 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, disa
         let newFactions = {...factions};
         const currentStatus = factions[factionName].status;
 
-if (disableFaction) {
-           newFactions[factionName].status = (currentStatus === IS_BANNED) ? IS_AVAILABLE : IS_BANNED;
+        if (isBanMode) {
+            newFactions[factionName].status = (currentStatus === IS_BANNED) ? IS_AVAILABLE : IS_BANNED;
         } else {
             newFactions[factionName].status = (currentStatus === IS_PICKED) ? IS_AVAILABLE : IS_PICKED;
         }
@@ -176,14 +177,14 @@ if (disableFaction) {
         setReach(reach);
     }, [setReach, factions])
 
-return (
+    return (
         <Grid container columns={{xs: 3}} rowSpacing={6} justifyContent={'center'}>
             {Object.values(factions).map((faction, index) => (
                 <Grid item xs={1} sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "9em" }} key={index} >
                     <ChooseFactionButton
                         handleFactionClick={handleFactionClick}
                         faction={faction}
-                        disableFaction={disableFaction} // Pass down one more level
+                        isBanMode={isBanMode}
                     />
                 </Grid>
             ))}
