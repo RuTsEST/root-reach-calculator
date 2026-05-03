@@ -43,3 +43,11 @@ test('switching to 1 Bot mode sets required reach to 8', () => {
   fireEvent.click(screen.getByRole('button', { name: /1 bot/i }));
   expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 0 / 8+');
 });
+
+test('reset button clears picked factions and returns reach to 0', () => {
+  const { container } = render(<App />);
+  fireEvent.click(container.querySelector('[data-cy="marquise"]'));
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 10 / 21+');
+  fireEvent.click(screen.getByRole('button', { name: /reset/i }));
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 0 / 21+');
+});
