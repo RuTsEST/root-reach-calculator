@@ -5,9 +5,18 @@ import {Container, CssBaseline, Stack, ToggleButton, ToggleButtonGroup } from "@
 import {PlayerCountButtons} from "./components/PlayerCountButtons";
 import {ChooseFactionButtons} from "./components/ChooseFactionButtons";
 
-const ReachIndicator = ({ reach, requiredReach }) => (
-    <h3 className="reach" data-cy="reach-indicator">{reach}/{requiredReach}+</h3>
-)
+const ReachIndicator = ({ reach, requiredReach }) => {
+    const isMet = reach >= requiredReach;
+    return (
+        <h3
+            className="reach"
+            data-cy="reach-indicator"
+            style={{ color: isMet ? '#4da251' : '#b66969', margin: 0 }}
+        >
+            Reach: {reach} / {requiredReach}+
+        </h3>
+    );
+};
 
 const idToValuesMap = {
     'player2': { requiredReach: 17, playerCount: 2 },
@@ -63,8 +72,8 @@ function App() {
                         value={isBanMode ? 'ban' : 'pick'}
                         onChange={(_, v) => { if (v !== null) setIsBanMode(v === 'ban'); }}
                     >
-                        <ToggleButton value='ban'>Disable Factions</ToggleButton>
-                        <ToggleButton value='pick'>Enable Factions</ToggleButton>
+                        <ToggleButton value='ban'>Ban</ToggleButton>
+                        <ToggleButton value='pick'>Pick</ToggleButton>
                     </ToggleButtonGroup>
                     <ReachIndicator reach={reach} requiredReach={requiredReach} />
                 </div>
