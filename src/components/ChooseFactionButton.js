@@ -14,8 +14,8 @@ const getFactionButtonColor = (faction) => {
 }
 
 export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) => {
-    const widthAndHeight = faction.status === IS_NOT_AVAILABLE ? "3em" : "5em"
-    const badgeTopAndRight = faction.status === IS_NOT_AVAILABLE ? "0.4em" : "0.7em"
+    const widthAndHeight = faction.status === IS_NOT_AVAILABLE ? "4em" : "7em"
+    const badgeTopAndRight = faction.status === IS_NOT_AVAILABLE ? "0.5em" : "1em"
     const badgeFontSize = faction.status === IS_NOT_AVAILABLE ? "small" : "large";
     const opacity = faction.status === IS_NOT_AVAILABLE ? "50%" : "100%"
     const fabColor = getFactionButtonColor(faction);
