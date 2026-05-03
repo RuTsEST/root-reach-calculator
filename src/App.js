@@ -16,6 +16,8 @@ const idToValuesMap = {
     'player5': { requiredReach: 25, playerCount: 5 },
     'player6': { requiredReach: 28, playerCount: 6 },
 
+    // Clockwork reach thresholds are unofficial estimates based on feel,
+    // not sourced from official Root rules or the Clockwork expansion rulebook.
     '1clockwork1': { requiredReach: 8, playerCount: 1 },
     '1clockwork2': { requiredReach: 12, playerCount: 2 },
     '1clockwork3': { requiredReach: 14, playerCount: 3 },
