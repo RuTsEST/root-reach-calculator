@@ -84,13 +84,7 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, isBa
         }
     });
 
-    React.useEffect(() => {
-        const recalculatedFactions = setAvailableFactions(factions);
-
-        setFactions(recalculatedFactions);
-    }, [requiredReach])
-
-    const setAvailableFactions = (previousFactions) => {
+    const setAvailableFactions = React.useCallback((previousFactions) => {
         const factions = {...previousFactions};
         const pickedFactions = Object.values(factions).filter((faction) => faction.status === IS_PICKED)
 
@@ -152,7 +146,11 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, isBa
         }
 
         return factions;
-    }
+    }, [playerCount, requiredReach]);
+
+    React.useEffect(() => {
+        setFactions(prev => setAvailableFactions(prev));
+    }, [setAvailableFactions]);
 
     const handleFactionClick = (factionName) => {
         let newFactions = {...factions};
