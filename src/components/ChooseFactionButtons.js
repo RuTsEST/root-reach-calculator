@@ -176,7 +176,7 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, isBa
     }, [setReach, factions])
 
     return (
-        <Grid container columns={{xs: 3}} rowSpacing={6} justifyContent={'center'}>
+        <Grid container columns={{xs: 3}} rowSpacing={1} justifyContent={'center'}>
             {Object.values(factions).map((faction, index) => (
                 <Grid item xs={1} sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "9em" }} key={index} >
                     <ChooseFactionButton
