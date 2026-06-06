@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/root-reach-calculator/static/css/main.d4e708bf.css",
-    "main.js": "/root-reach-calculator/static/js/main.3d700dce.js",
+    "main.js": "/root-reach-calculator/static/js/main.6efdd0dc.js",
     "static/js/453.df7920b0.chunk.js": "/root-reach-calculator/static/js/453.df7920b0.chunk.js",
     "static/media/riverfolk.png": "/root-reach-calculator/static/media/riverfolk.d7d55d706a8921b005f2.png",
     "static/media/alliance.png": "/root-reach-calculator/static/media/alliance.e806127f69ba701f1e23.png",
@@ -19,11 +19,11 @@
     "static/media/lilypad.png": "/root-reach-calculator/static/media/lilypad.747eb920701e5a8560b6.png",
     "index.html": "/root-reach-calculator/index.html",
     "main.d4e708bf.css.map": "/root-reach-calculator/static/css/main.d4e708bf.css.map",
-    "main.3d700dce.js.map": "/root-reach-calculator/static/js/main.3d700dce.js.map",
+    "main.6efdd0dc.js.map": "/root-reach-calculator/static/js/main.6efdd0dc.js.map",
     "453.df7920b0.chunk.js.map": "/root-reach-calculator/static/js/453.df7920b0.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.d4e708bf.css",
-    "static/js/main.3d700dce.js"
+    "static/js/main.6efdd0dc.js"
   ]
 }
