@@ -10,6 +10,9 @@ import vagabondImage from "../faction-images/vagabond.png";
 import vagabond2Image from "../faction-images/vagabond2.png";
 import hundredsImage from "../faction-images/hundreds.png";
 import keepersImage from "../faction-images/keepers.png";
+import lilypadImage from "../faction-images/lilypad.png";
+import twilightImage from "../faction-images/twilight.png";
+import knavesImage from "../faction-images/knaves.png";
 import * as React from 'react';
 import {IS_AVAILABLE, IS_BANNED, IS_NOT_AVAILABLE, IS_PICKED} from "../constants";
 import {ChooseFactionButton} from "./ChooseFactionButton";
@@ -81,6 +84,24 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, isBa
             image: keepersImage,
             reach: 8,
             status: IS_AVAILABLE
+        },
+        lilypad: {
+            name: "lilypad",
+            image: lilypadImage,
+            reach: 7,
+            status: IS_AVAILABLE
+        },
+        twilight: {
+            name: "twilight",
+            image: twilightImage,
+            reach: 4,
+            status: IS_AVAILABLE
+        },
+        knaves: {
+            name: "knaves",
+            image: knavesImage,
+            reach: 4,
+            status: IS_AVAILABLE
         }
     });
 
@@ -126,6 +147,16 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, isBa
             }
 
             if (factions[factionsKey].name === "vagabond2" && (factions.vagabond1.status !== IS_PICKED)){
+                factions[factionsKey].status = IS_NOT_AVAILABLE;
+                continue
+            }
+
+            // Knaves of the Deepwood use Vagabond components and cannot be played with any Vagabond
+            if (factions[factionsKey].name === "knaves" && (factions.vagabond1.status === IS_PICKED || factions.vagabond2.status === IS_PICKED)) {
+                factions[factionsKey].status = IS_NOT_AVAILABLE;
+                continue
+            }
+            if ((factions[factionsKey].name === "vagabond1" || factions[factionsKey].name === "vagabond2") && factions.knaves.status === IS_PICKED) {
                 factions[factionsKey].status = IS_NOT_AVAILABLE;
                 continue
             }
