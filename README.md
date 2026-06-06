@@ -63,8 +63,12 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/a
 
 ### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+The app is deployed to GitHub Pages at https://rutsest.github.io/root-reach-calculator/.
 
-### `npm run build` fails to minify
+Always run the build explicitly before deploying — the `predeploy` npm hook is unreliable when the dev server is running concurrently:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```bash
+npm run build && npx gh-pages -d build
+```
+
+Verify the new faction images are present in `build/static/media/` before deploying. After publishing, GitHub Pages CDN can take a few minutes to propagate changes.
