@@ -78,7 +78,7 @@ function App() {
                     <RefreshIcon />
                 </IconButton>
             </Box>
-            <Box sx={{ flex: 1, overflow: 'auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', pt: 3 }}>
+            <Box sx={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
                 <ChooseFactionButtons
                     key={resetKey}
                     playerCount={playerCount}

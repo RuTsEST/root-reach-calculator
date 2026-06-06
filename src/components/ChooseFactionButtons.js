@@ -1,4 +1,4 @@
-import {Grid} from "@mui/material";
+import {Box} from "@mui/material";
 import eyrieImage from "../faction-images/eyrie.png";
 import corvidImage from "../faction-images/corvid.png";
 import allianceImage from "../faction-images/alliance.png";
@@ -206,17 +206,27 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, isBa
         setReach(reach);
     }, [setReach, factions])
 
+    const factionArray = Object.values(factions);
+    const lastRowCount = factionArray.length % 3;
+    const lastRowStart = lastRowCount > 0 ? factionArray.length - lastRowCount : factionArray.length;
+
     return (
-        <Grid container columns={{xs: 3}} rowSpacing={1} justifyContent={'center'}>
-            {Object.values(factions).map((faction, index) => (
-                <Grid item xs={1} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }} key={index} >
-                    <ChooseFactionButton
-                        handleFactionClick={handleFactionClick}
-                        faction={faction}
-                        isBanMode={isBanMode}
-                    />
-                </Grid>
-            ))}
-        </Grid>
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gridAutoRows: '1fr', flex: 1 }}>
+            {factionArray.map((faction, index) => {
+                const isLastRow = lastRowCount > 0 && index >= lastRowStart;
+                const posInLastRow = isLastRow ? index - lastRowStart : 0;
+                const gridColumn = isLastRow ? `${posInLastRow * 2 + 2} / span 2` : 'span 2';
+
+                return (
+                    <Box key={index} sx={{ display: "flex", justifyContent: "center", alignItems: "center", gridColumn }}>
+                        <ChooseFactionButton
+                            handleFactionClick={handleFactionClick}
+                            faction={faction}
+                            isBanMode={isBanMode}
+                        />
+                    </Box>
+                );
+            })}
+        </Box>
     );
 };
