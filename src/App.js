@@ -83,7 +83,6 @@ function App() {
                     key={resetKey}
                     playerCount={playerCount}
                     setReach={setReach}
-                    reach={reach}
                     requiredReach={requiredReach}
                     isBanMode={isBanMode}
                 />

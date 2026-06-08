@@ -24,3 +24,7 @@ yarn-error.log*
 
 # worktrees
 .worktrees/
+
+# IDE
+.idea/
+*.iml
