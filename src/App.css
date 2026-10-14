@@ -4,11 +4,27 @@
 
 .app-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.25rem;
   padding: 0.5rem 0.75rem;
   flex-shrink: 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.app-header-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.reach {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: nowrap;
 }
 
 .app-footer {
