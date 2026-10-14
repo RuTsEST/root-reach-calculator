@@ -21,84 +21,98 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, isBa
     const [factions, setFactions] = React.useState({
         marquise: {
             name: "marquise",
+            label: "Marquise",
             image: marquiseImage,
             reach: 10,
             status: IS_AVAILABLE
         },
         eyrie: {
             name: "eyrie",
+            label: "Eyrie",
             image: eyrieImage,
             reach: 7,
             status: IS_AVAILABLE
         },
         alliance: {
             name: "alliance",
+            label: "Alliance",
             image: allianceImage,
             reach: 3,
             status: IS_AVAILABLE
         },
         vagabond1: {
             name: "vagabond1",
+            label: "Vagabond",
             image: vagabondImage,
             reach: 5,
             status: IS_NOT_AVAILABLE
         },
         riverfolk: {
             name: "riverfolk",
+            label: "Riverfolk",
             image: riverfolkImage,
             reach: 5,
             status: IS_NOT_AVAILABLE
         },
         cult: {
             name: "cult",
+            label: "Cult",
             image: cultImage,
             reach: 2,
             status: IS_NOT_AVAILABLE
         },
         corvid: {
             name: "corvid",
+            label: "Corvid",
             image: corvidImage,
             reach: 3,
             status: IS_AVAILABLE
         },
         duchy: {
             name: "duchy",
+            label: "Duchy",
             image: duchyImage,
             reach: 8,
             status: IS_AVAILABLE
         },
         vagabond2: {
             name: "vagabond2",
+            label: "Vagabond 2",
             image: vagabond2Image,
             reach: 2,
             status: IS_NOT_AVAILABLE
         },
         hundreds: {
             name: "hundreds",
+            label: "Hundreds",
             image: hundredsImage,
             reach: 9,
             status: IS_AVAILABLE
         },
         keepers: {
             name: "keepers",
+            label: "Keepers",
             image: keepersImage,
             reach: 8,
             status: IS_AVAILABLE
         },
         lilypad: {
             name: "lilypad",
+            label: "Lilypad",
             image: lilypadImage,
             reach: 7,
             status: IS_AVAILABLE
         },
         twilight: {
             name: "twilight",
+            label: "Twilight",
             image: twilightImage,
             reach: 4,
             status: IS_AVAILABLE
         },
         knaves: {
             name: "knaves",
+            label: "Knaves",
             image: knavesImage,
             reach: 4,
             status: IS_AVAILABLE

@@ -7,13 +7,16 @@ import { ChooseFactionButtons } from "./components/ChooseFactionButtons";
 
 const ReachIndicator = ({ reach, requiredReach }) => {
     const isMet = reach >= requiredReach;
+    const statusCue = isMet ? 'OK' : 'Below target';
     return (
         <h3
             className="reach"
             data-cy="reach-indicator"
-            style={{ color: isMet ? '#4da251' : '#b66969', margin: 0 }}
+            aria-live="polite"
+            style={{ color: isMet ? '#4da251' : '#b66969' }}
         >
-            Reach: {reach} / {requiredReach}+
+            <span className="reach-values">Reach: {reach} / {requiredReach}+</span>
+            <span className="reach-status">{statusCue}</span>
         </h3>
     );
 };
