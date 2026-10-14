@@ -230,11 +230,8 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, isBa
             gridTemplateColumns: 'repeat(6, 1fr)',
             gridAutoRows: '1fr',
             flex: 1,
-            // Room for Badge overhang so top/side digits are not clipped by the scrollport.
-            pt: '1.5em',
-            px: '0.75em',
-            pb: '0.5em',
-            columnGap: '0.25em',
+            // Keep Fabs clear of the scrollport clip edge.
+            p: '0.75em',
             rowGap: '0.5em',
         }}>
             {factionArray.map((faction, index) => {

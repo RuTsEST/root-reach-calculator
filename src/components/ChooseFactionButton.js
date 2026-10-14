@@ -22,9 +22,9 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
     const opacity = isPickDisabled ? "50%" : "100%"
     const fabColor = getFactionButtonColor(faction);
 
-    // Badge wraps Fab so ButtonBase overflow:hidden cannot clip the digits.
-    // Fab z-index must stay at 0 so the reach badge (z-index 1) paints above it
-    // and above neighboring Fabs; otherwise the digits sit behind the circles.
+    // Badge wraps Fab (ButtonBase overflow:hidden would clip an inner badge).
+    // Inset top/right (no outward translate) keeps the number fully on the Fab
+    // so it cannot clip on the scrollport or tuck under the row above.
     return (
         <Badge
             overlap="circular"
@@ -43,9 +43,9 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
             }
             sx={{
                 "& .MuiBadge-badge": {
-                    top: 0,
-                    right: 0,
-                    transform: "translate(30%, -30%)",
+                    top: "10px",
+                    right: "10px",
+                    transform: "none",
                     zIndex: 1,
                 },
             }}
