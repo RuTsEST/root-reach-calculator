@@ -46,8 +46,9 @@ const groupSx = {
     flexShrink: 0,
     '& .MuiToggleButton-root': {
         px: { xs: 0.55, sm: 1.1 },
-        py: { xs: 0.45, sm: 0.55 },
+        py: { xs: 0.7, sm: 0.8 },
         minWidth: { xs: '1.65rem', sm: '2.25rem' },
+        minHeight: { xs: '2.15rem', sm: '2.35rem' },
         fontSize: { xs: '0.8rem', sm: '0.875rem' },
         lineHeight: 1.35,
     },
@@ -83,7 +84,7 @@ export const PlayerCountButtons = ({ selectedValue, handleToggleButtonChange }) 
             justifyContent="center"
             sx={{
                 px: { xs: 0.4, sm: 0.75 },
-                py: { xs: 0.45, sm: 0.55 },
+                py: { xs: 0.55, sm: 0.65 },
                 gap: { xs: 0.65, sm: 1.5 },
                 overflowX: 'auto',
             }}
