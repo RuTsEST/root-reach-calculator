@@ -11,7 +11,6 @@ Live at **https://rutsest.github.io/root-reach-calculator/**
 ```bash
 npm start        # dev server at localhost:3000
 npm test         # unit tests
-npm run test:cypress  # e2e tests
 ```
 
 ## Deploy
