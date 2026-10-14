@@ -8,7 +8,7 @@ For: Ruudi · Repo: `RuTsEST/root-reach-calculator` · Live: https://rutsest.git
 
 **What it is.** A small Create React App + MUI tool for picking/banning *Root* factions against official (and unofficial Clockwork) reach thresholds. Ban/pick modes, player-count and 1-/2-bot modes, live reach total, and automatic disable of factions that can no longer meet the target. Deployed manually to GitHub Pages via `gh-pages`.
 
-**Overall health.** Product-wise the app is focused and usable: recent cleanup removed dead code and CRA boilerplate README, Homeland factions are live, and unit tests cover the main pick/ban/reach/reset flows. Tech health is solidifying: unused `web-vitals` trimmed and `gh-pages` moved to devDependencies; Jest-only CI on master; Pages deploy via GitHub Actions on master (P1.1 — verified live after Pages source → GitHub Actions). Faction fabs have accessible names/alt and reach status includes a text cue + `aria-live` (#11). Ban mode can target grayed “unavailable” factions (#12). Faction reach badges no longer clip on mobile (P1.8 — PR pending). Cypress and dead PWA logo192/logo512 refs are removed (favicon-only). Lockfile is clean against `registry.npmjs.org`; GoatCounter site `ruts` is live on GitHub Pages. Complexity is still low — keep it that way.
+**Overall health.** Product-wise the app is focused and usable: recent cleanup removed dead code and CRA boilerplate README, Homeland factions are live, and unit tests cover the main pick/ban/reach/reset flows. Tech health is solidifying: unused `web-vitals` trimmed and `gh-pages` moved to devDependencies; Jest-only CI on master; Pages deploy via GitHub Actions on master (P1.1 — verified live after Pages source → GitHub Actions). Faction fabs have accessible names/alt and reach status includes a text cue + `aria-live` (#11). Ban mode can target grayed “unavailable” factions (#12). Faction reach badges no longer clip on mobile (P1.8 — [#14](https://github.com/RuTsEST/root-reach-calculator/pull/14)). Cypress and dead PWA logo192/logo512 refs are removed (favicon-only). Lockfile is clean against `registry.npmjs.org`; GoatCounter site `ruts` is live on GitHub Pages. Complexity is still low — keep it that way.
 
 ---
 
@@ -37,7 +37,7 @@ Risk to simplicity: **Low** / **Medium** / **High**.
 | P1.5 | **~~Trim dead dependency surface~~ ([#10](https://github.com/RuTsEST/root-reach-calculator/pull/10))** | `web-vitals` remained after `reportWebVitals` was removed; `gh-pages` was in `dependencies`. | S | Low | **Draft PR #10:** Removed `web-vitals`; moved `gh-pages` to `devDependencies`; lockfile regenerated against `registry.npmjs.org` only. |
 | P1.6 | **~~Ban before “unavailable”~~ ([#12](https://github.com/RuTsEST/root-reach-calculator/pull/12))** | Unavailable factions are `disabled`, so you cannot ban a faction that the reach solver already grayed out — awkward when planning bans first. | S–M | Med | **Draft PR #12:** In ban mode, `IS_NOT_AVAILABLE` fabs stay clickable and keep full size/opacity (pick mode still shrinks/grays/disables). Unit test covers ban-on-grayed + size restore. |
 | P1.7 | **~~Minimal CI (unit tests only)~~ ([#10](https://github.com/RuTsEST/root-reach-calculator/pull/10))** | No `.github/workflows`. Reach-logic regressions only show up locally. | S–M | Low | **Draft PR #10:** Workflow runs `npm ci` → `npm test -- --watchAll=false` on push/PR. No Cypress / e2e. |
-| P1.8 | **~~Fix faction reach badge clipping (mobile)~~ (PR pending)** | On ~375px, top-row Fab reach-number badges are cut off mid-digit by overflow/padding. Pre-existing; called out in PR #11 mobile review. | S–M | Low–Med | **PR:** Badge wraps Fab (avoids ButtonBase `overflow:hidden` clip) + light grid padding for badge overhang. Evidence: `media/faction-reach-badge-cutoff-mobile.png` → `media/faction-reach-badge-fixed-mobile.png`. |
+| P1.8 | **~~Fix faction reach badge clipping (mobile)~~ ([#14](https://github.com/RuTsEST/root-reach-calculator/pull/14))** | On ~375px, top-row Fab reach-number badges are cut off mid-digit by overflow/padding. Pre-existing; called out in PR #11 mobile review. | S–M | Low–Med | **Draft PR #14:** Badge wraps Fab; Fab `z-index: 0` so badges paint above circles; light grid padding/gap for overhang. Evidence: `media/faction-reach-badge-cutoff-mobile.png` → `media/faction-reach-badge-fixed-mobile.png`. |
 
 ### P2 — Nice to have (only if P0/P1 are done)
 
@@ -71,7 +71,7 @@ Risk to simplicity: **Low** / **Medium** / **High**.
 
 1. **~~P0.0 + P0.3~~** — Done: clean lockfile on master; Pages redeployed; GoatCounter live.
 2. **~~P1.2 / P1.3 / P1.4 / P1.5 / P1.6 / P1.7~~** — Merged (#9–#12).
-3. **P1.1 done** (Actions deploy verified). **P1.8** (faction reach badge clipping) — PR pending; coordinator cleanup of this doc after merge + deploy.
+3. **P1.1 done** (Actions deploy verified). **P1.8** (faction reach badge clipping) — [#14](https://github.com/RuTsEST/root-reach-calculator/pull/14); coordinator cleanup of this doc after merge + deploy.
 
 ---
 
