@@ -228,11 +228,13 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, isBa
         <Box sx={{
             display: 'grid',
             gridTemplateColumns: 'repeat(6, 1fr)',
-            gridAutoRows: '1fr',
-            flex: 1,
-            // Keep Fabs clear of the scrollport clip edge.
-            p: '0.75em',
-            rowGap: '0.5em',
+            gridAutoRows: 'auto',
+            justifyItems: 'center',
+            alignItems: 'center',
+            flex: '0 0 auto',
+            py: 1,
+            px: 0.5,
+            rowGap: 1,
         }}>
             {factionArray.map((faction, index) => {
                 const isLastRow = lastRowCount > 0 && index >= lastRowStart;

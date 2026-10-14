@@ -1,4 +1,4 @@
-import {Avatar, Badge, Fab} from "@mui/material";
+import {Avatar, Box, Fab} from "@mui/material";
 import * as React from "react";
 import {IS_BANNED, IS_NOT_AVAILABLE, IS_PICKED} from "../constants";
 import {FactionStatusOverlay} from "./FactionStatusOverlay";
@@ -19,37 +19,16 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
     const isPickDisabled = !isBanMode && faction.status === IS_NOT_AVAILABLE;
     const widthAndHeight = isPickDisabled ? "4em" : "7em"
     const badgeFontSize = isPickDisabled ? "small" : "large";
+    const badgeSize = isPickDisabled ? 22 : 32;
+    const badgeInset = isPickDisabled ? 4 : 8;
     const opacity = isPickDisabled ? "50%" : "100%"
     const fabColor = getFactionButtonColor(faction);
 
-    // Badge wraps Fab (ButtonBase overflow:hidden would clip an inner badge).
-    // Inset top/right (no outward translate) keeps the number fully on the Fab
-    // so it cannot clip on the scrollport or tuck under the row above.
+    // Reach number is absolutely positioned on the Fab corner (not MUI Badge).
+    // That keeps digits fully inside the control — no scrollport clip, no stacking
+    // under the row above.
     return (
-        <Badge
-            overlap="circular"
-            badgeContent={
-                <Avatar
-                    sx={{
-                        width: "2em",
-                        height: "2em",
-                        fontSize: badgeFontSize,
-                        lineHeight: 1,
-                        backgroundColor: fabColor,
-                    }}
-                >
-                    {faction.reach}
-                </Avatar>
-            }
-            sx={{
-                "& .MuiBadge-badge": {
-                    top: "10px",
-                    right: "10px",
-                    transform: "none",
-                    zIndex: 1,
-                },
-            }}
-        >
+        <Box sx={{ position: "relative", display: "inline-flex", flexShrink: 0 }}>
             <Fab onClick={() => handleFactionClick(faction.name)}
                  value={faction.reach}
                  aria-label={faction.label}
@@ -57,6 +36,7 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
                      width: widthAndHeight,
                      height: widthAndHeight,
                      opacity: opacity,
+                     // Fab theme z-index is high; keep it under the reach avatar.
                      zIndex: 0,
                  }}
                  disabled={isPickDisabled}
@@ -70,6 +50,23 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
                     src={faction.image}
                 />
             </Fab>
-        </Badge>
+            <Avatar
+                aria-hidden
+                sx={{
+                    position: "absolute",
+                    top: badgeInset,
+                    right: badgeInset,
+                    width: badgeSize,
+                    height: badgeSize,
+                    fontSize: badgeFontSize,
+                    lineHeight: 1,
+                    backgroundColor: fabColor || "rgb(189, 189, 189)",
+                    zIndex: 1,
+                    pointerEvents: "none",
+                }}
+            >
+                {faction.reach}
+            </Avatar>
+        </Box>
     )
 }
