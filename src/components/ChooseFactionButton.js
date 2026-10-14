@@ -14,10 +14,13 @@ const getFactionButtonColor = (faction) => {
 }
 
 export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) => {
-    const widthAndHeight = faction.status === IS_NOT_AVAILABLE ? "4em" : "7em"
-    const badgeTopAndRight = faction.status === IS_NOT_AVAILABLE ? "0.5em" : "1em"
-    const badgeFontSize = faction.status === IS_NOT_AVAILABLE ? "small" : "large";
-    const opacity = faction.status === IS_NOT_AVAILABLE ? "50%" : "100%"
+    // Shrink/gray only when pick mode disables the fab. In ban mode, keep full size
+    // so "unavailable" factions still read as clickable ban targets.
+    const isPickDisabled = !isBanMode && faction.status === IS_NOT_AVAILABLE;
+    const widthAndHeight = isPickDisabled ? "4em" : "7em"
+    const badgeTopAndRight = isPickDisabled ? "0.5em" : "1em"
+    const badgeFontSize = isPickDisabled ? "small" : "large";
+    const opacity = isPickDisabled ? "50%" : "100%"
     const fabColor = getFactionButtonColor(faction);
 
     return (
@@ -25,7 +28,7 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
              value={faction.reach}
              aria-label={faction.label}
              sx={{width: widthAndHeight, height: widthAndHeight, opacity: opacity}}
-             disabled={!isBanMode && faction.status === IS_NOT_AVAILABLE}
+             disabled={isPickDisabled}
              data-cy={faction.name}
         >
             <Badge
