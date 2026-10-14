@@ -25,8 +25,8 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
     const opacity = isPickDisabled ? "50%" : "100%"
     const fabColor = getFactionButtonColor(faction);
 
-    // Badge center sits on the Fab circle at ~2 o'clock (45°), so the Fab edge
-    // bisects the reach number. Margin keeps that overhang inside the layout.
+    // Reach Avatar at ~2 o'clock, slightly outside the rim so the Fab edge
+    // cuts the number ~half-in/half-out. Margin keeps the overhang in layout.
     return (
         <Box sx={{
             position: "relative",
