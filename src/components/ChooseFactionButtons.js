@@ -232,9 +232,9 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, isBa
             justifyItems: 'center',
             alignItems: 'center',
             flex: '0 0 auto',
-            py: 1,
-            px: 0.5,
-            rowGap: 1,
+            // Reach badges overhang by half their size; button margin covers that.
+            py: 0.5,
+            px: 0.25,
         }}>
             {factionArray.map((faction, index) => {
                 const isLastRow = lastRowCount > 0 && index >= lastRowStart;

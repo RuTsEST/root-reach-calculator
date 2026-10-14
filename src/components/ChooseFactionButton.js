@@ -20,15 +20,20 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
     const widthAndHeight = isPickDisabled ? "4em" : "7em"
     const badgeFontSize = isPickDisabled ? "small" : "large";
     const badgeSize = isPickDisabled ? 22 : 32;
-    const badgeInset = isPickDisabled ? 4 : 8;
+    // Half the badge hangs outside the Fab so the Fab edge bisects it.
+    const badgeOverhang = badgeSize / 2;
     const opacity = isPickDisabled ? "50%" : "100%"
     const fabColor = getFactionButtonColor(faction);
 
-    // Reach number is absolutely positioned on the Fab corner (not MUI Badge).
-    // That keeps digits fully inside the control — no scrollport clip, no stacking
-    // under the row above.
+    // Margin reserves layout space for the overhang so the scrollport / neighbors
+    // cannot clip or cover the half that sits outside the Fab.
     return (
-        <Box sx={{ position: "relative", display: "inline-flex", flexShrink: 0 }}>
+        <Box sx={{
+            position: "relative",
+            display: "inline-flex",
+            flexShrink: 0,
+            m: `${badgeOverhang}px`,
+        }}>
             <Fab onClick={() => handleFactionClick(faction.name)}
                  value={faction.reach}
                  aria-label={faction.label}
@@ -36,7 +41,6 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
                      width: widthAndHeight,
                      height: widthAndHeight,
                      opacity: opacity,
-                     // Fab theme z-index is high; keep it under the reach avatar.
                      zIndex: 0,
                  }}
                  disabled={isPickDisabled}
@@ -54,8 +58,8 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
                 aria-hidden
                 sx={{
                     position: "absolute",
-                    top: badgeInset,
-                    right: badgeInset,
+                    top: -badgeOverhang,
+                    right: -badgeOverhang,
                     width: badgeSize,
                     height: badgeSize,
                     fontSize: badgeFontSize,
