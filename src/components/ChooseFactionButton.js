@@ -18,29 +18,37 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
     // so "unavailable" factions still read as clickable ban targets.
     const isPickDisabled = !isBanMode && faction.status === IS_NOT_AVAILABLE;
     const widthAndHeight = isPickDisabled ? "4em" : "7em"
-    const badgeTopAndRight = isPickDisabled ? "0.5em" : "1em"
     const badgeFontSize = isPickDisabled ? "small" : "large";
     const opacity = isPickDisabled ? "50%" : "100%"
     const fabColor = getFactionButtonColor(faction);
 
+    // Badge wraps Fab so ButtonBase overflow:hidden cannot clip the digits.
+    // Modest translate keeps the number on the Fab corner (above the art, not under
+    // neighboring fabs). zIndex keeps badges above later grid Fabs that would
+    // otherwise paint over the overhang.
     return (
-        <Fab onClick={() => handleFactionClick(faction.name)}
-             value={faction.reach}
-             aria-label={faction.label}
-             sx={{width: widthAndHeight, height: widthAndHeight, opacity: opacity}}
-             disabled={isPickDisabled}
-             data-cy={faction.name}
+        <Badge
+            overlap="circular"
+            badgeContent={
+                <Avatar sx={{width: "2em", height: "2em", fontSize: badgeFontSize, backgroundColor: fabColor}}>
+                    {faction.reach}
+                </Avatar>
+            }
+            sx={{
+                "& .MuiBadge-badge": {
+                    top: 0,
+                    right: 0,
+                    transform: "translate(35%, -35%)",
+                    zIndex: 10,
+                },
+            }}
         >
-            <Badge
-                badgeContent={
-                    <Avatar sx={{width: "2em", height: "2em", fontSize: badgeFontSize, backgroundColor: fabColor}}>
-                        {faction.reach}
-                    </Avatar>
-                }
-                sx={{
-                    "& .MuiBadge-badge": { top: badgeTopAndRight, right: badgeTopAndRight },
-                    width: "100%", height: "100%", alignItems: "center", justifyContent: "center"
-                }}
+            <Fab onClick={() => handleFactionClick(faction.name)}
+                 value={faction.reach}
+                 aria-label={faction.label}
+                 sx={{width: widthAndHeight, height: widthAndHeight, opacity: opacity}}
+                 disabled={isPickDisabled}
+                 data-cy={faction.name}
             >
                 <FactionStatusOverlay status={faction.status} />
                 <Avatar
@@ -49,7 +57,7 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
                     imgProps={{sx: {objectFit: "contain"}}}
                     src={faction.image}
                 />
-            </Badge>
-        </Fab>
+            </Fab>
+        </Badge>
     )
 }

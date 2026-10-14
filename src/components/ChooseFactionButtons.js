@@ -225,7 +225,16 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, isBa
     const lastRowStart = lastRowCount > 0 ? factionArray.length - lastRowCount : factionArray.length;
 
     return (
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gridAutoRows: '1fr', flex: 1 }}>
+        <Box sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(6, 1fr)',
+            gridAutoRows: '1fr',
+            flex: 1,
+            // Room for Badge overhang so top/side digits are not clipped by the scrollport.
+            pt: '0.75em',
+            px: '0.5em',
+            pb: '0.25em',
+        }}>
             {factionArray.map((faction, index) => {
                 const isLastRow = lastRowCount > 0 && index >= lastRowStart;
                 const posInLastRow = isLastRow ? index - lastRowStart : 0;
