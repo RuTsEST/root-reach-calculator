@@ -33,7 +33,7 @@ const resolvePlayersForBots = (bots, currentPlayers) => {
 
 const labelSx = {
     color: 'text.secondary',
-    fontSize: '0.75rem',
+    fontSize: { xs: '0.62rem', sm: '0.75rem' },
     fontWeight: 600,
     letterSpacing: '0.02em',
     lineHeight: 1,
@@ -43,12 +43,13 @@ const labelSx = {
 };
 
 const groupSx = {
+    flexShrink: 0,
     '& .MuiToggleButton-root': {
-        px: 1.1,
-        py: 0.55,
-        minWidth: '2.25rem',
-        fontSize: '0.875rem',
-        lineHeight: 1.4,
+        px: { xs: 0.55, sm: 1.1 },
+        py: { xs: 0.45, sm: 0.55 },
+        minWidth: { xs: '1.65rem', sm: '2.25rem' },
+        fontSize: { xs: '0.8rem', sm: '0.875rem' },
+        lineHeight: 1.35,
     },
 };
 
@@ -77,14 +78,17 @@ export const PlayerCountButtons = ({ selectedValue, handleToggleButtonChange }) 
     return (
         <Stack
             direction="row"
-            spacing={1.5}
-            useFlexGap
-            flexWrap="wrap"
+            flexWrap="nowrap"
             alignItems="center"
             justifyContent="center"
-            sx={{ px: 0.75, py: 0.55 }}
+            sx={{
+                px: { xs: 0.4, sm: 0.75 },
+                py: { xs: 0.45, sm: 0.55 },
+                gap: { xs: 0.65, sm: 1.5 },
+                overflowX: 'auto',
+            }}
         >
-            <Stack direction="row" spacing={0.75} alignItems="center">
+            <Stack direction="row" alignItems="center" sx={{ gap: { xs: 0.35, sm: 0.75 }, flexShrink: 0 }}>
                 <Typography component="span" sx={labelSx} aria-hidden="true">
                     Players
                 </Typography>
@@ -111,7 +115,7 @@ export const PlayerCountButtons = ({ selectedValue, handleToggleButtonChange }) 
                     })}
                 </ToggleButtonGroup>
             </Stack>
-            <Stack direction="row" spacing={0.75} alignItems="center">
+            <Stack direction="row" alignItems="center" sx={{ gap: { xs: 0.35, sm: 0.75 }, flexShrink: 0 }}>
                 <Typography component="span" sx={labelSx} aria-hidden="true">
                     Bots
                 </Typography>
