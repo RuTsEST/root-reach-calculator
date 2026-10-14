@@ -22,13 +22,21 @@ npm test         # unit tests
 
 ## Deploy
 
-Always build explicitly — the `predeploy` hook is unreliable when the dev server is running:
+Pushes to `master` build the CRA app and deploy to GitHub Pages via GitHub Actions (`.github/workflows/deploy-pages.yml`). You can also run the workflow manually from the Actions tab (`workflow_dispatch`).
+
+**One-time repo setting (required once):** GitHub → **Settings** → **Pages** → **Build and deployment** → **Source** → **GitHub Actions**. Until that is set, the workflow can run but Pages will not serve the new deploy.
+
+`package.json` `homepage` is already `https://rutsest.github.io/root-reach-calculator/` so asset paths stay correct for the project site.
+
+### Manual fallback
+
+If you need to publish from a laptop without waiting on Actions:
 
 ```bash
 npm run build && npx gh-pages -d build
 ```
 
-Verify the faction images are present in `build/static/media/` before deploying. GitHub Pages CDN can take a few minutes to propagate.
+Build explicitly first — the `predeploy` hook is unreliable when the dev server is running. Verify faction images are in `build/static/media/` before deploying. GitHub Pages CDN can take a few minutes to propagate.
 
 ## Analytics
 
