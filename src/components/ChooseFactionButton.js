@@ -20,13 +20,13 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
     const widthAndHeight = isPickDisabled ? "4em" : "7em"
     const badgeFontSize = isPickDisabled ? "small" : "large";
     const badgeSize = isPickDisabled ? 22 : 32;
-    // Half the badge hangs outside the Fab so the Fab edge bisects it.
+    // Room for the half of the badge that sits outside the Fab circle.
     const badgeOverhang = badgeSize / 2;
     const opacity = isPickDisabled ? "50%" : "100%"
     const fabColor = getFactionButtonColor(faction);
 
-    // Margin reserves layout space for the overhang so the scrollport / neighbors
-    // cannot clip or cover the half that sits outside the Fab.
+    // Badge center sits on the Fab circle at ~2 o'clock (45°), so the Fab edge
+    // bisects the reach number. Margin keeps that overhang inside the layout.
     return (
         <Box sx={{
             position: "relative",
@@ -58,8 +58,10 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
                 aria-hidden
                 sx={{
                     position: "absolute",
-                    top: -badgeOverhang,
-                    right: -badgeOverhang,
+                    // (1 - cos45°)/2 ≈ 14.64% from top/right → NE point on the circle
+                    top: "14.64%",
+                    right: "14.64%",
+                    transform: "translate(50%, -50%)",
                     width: badgeSize,
                     height: badgeSize,
                     fontSize: badgeFontSize,
