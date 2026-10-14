@@ -68,12 +68,68 @@ test('ban mode: can ban a faction grayed out as unavailable', () => {
   expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 34 / 21+');
 });
 
-test('switching to 1 Bot mode sets required reach to 8', () => {
+test('switching to 1 bot with 1 player sets required reach to 8', () => {
   const { container } = render(<App />);
-  fireEvent.click(screen.getByRole('button', { name: /1 bot/i }));
+  fireEvent.click(screen.getByRole('button', { name: /^1 bot$/i }));
+  // Default players was 4; keep 4 if still legal under 1 bot (threshold 16).
+  // Select 1 player for the classic 1-bot solo threshold of 8.
+  fireEvent.click(screen.getByRole('button', { name: /^1 player$/i }));
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
   expect(indicator).toHaveTextContent('Reach: 0 / 8+');
   expect(indicator).toHaveTextContent('Below target');
+});
+
+test('1 bot keeps legal player count and updates reach threshold', () => {
+  const { container } = render(<App />);
+  // Start at 4 players (21+); switch to 1 bot → keep 4 → 1clockwork4 (16+)
+  fireEvent.click(screen.getByRole('button', { name: /^1 bot$/i }));
+  const indicator = container.querySelector('[data-cy="reach-indicator"]');
+  expect(indicator).toHaveTextContent('Reach: 0 / 16+');
+  expect(screen.getByRole('button', { name: /^5 players$/i })).toBeDisabled();
+  expect(screen.getByRole('button', { name: /^6 players$/i })).toBeDisabled();
+  expect(screen.getByRole('button', { name: /^1 player$/i })).not.toBeDisabled();
+});
+
+test('2 bots selects matching clockwork threshold', () => {
+  const { container } = render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: /^2 bots$/i }));
+  fireEvent.click(screen.getByRole('button', { name: /^2 players$/i }));
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 0 / 14+');
+});
+
+test('defaults to 0 bots with 4 players selected', () => {
+  const { container } = render(<App />);
+  expect(screen.getByRole('button', { name: /^0 bots$/i })).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getByRole('button', { name: /^4 players$/i })).toHaveAttribute('aria-pressed', 'true');
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 0 / 21+');
+});
+
+test('illegal player counts are disabled for current bot count', () => {
+  render(<App />);
+  // No bots: player 1 illegal; 2–6 legal
+  expect(screen.getByRole('button', { name: /^1 player$/i })).toBeDisabled();
+  expect(screen.getByRole('button', { name: /^2 players$/i })).not.toBeDisabled();
+
+  fireEvent.click(screen.getByRole('button', { name: /^1 bot$/i }));
+  expect(screen.getByRole('button', { name: /^1 player$/i })).not.toBeDisabled();
+  expect(screen.getByRole('button', { name: /^5 players$/i })).toBeDisabled();
+});
+
+test('switching bots remaps illegal player count to a valid default', () => {
+  const { container } = render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: /^5 players$/i }));
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 0 / 25+');
+
+  // 5 players is illegal with bots → clamp to 4 → 1clockwork4 (16+)
+  fireEvent.click(screen.getByRole('button', { name: /^1 bot$/i }));
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 0 / 16+');
+  expect(screen.getByRole('button', { name: /^4 players$/i })).toHaveAttribute('aria-pressed', 'true');
+
+  // 1 player is illegal with 0 bots → clamp to 2 → player2 (17+)
+  fireEvent.click(screen.getByRole('button', { name: /^1 player$/i }));
+  fireEvent.click(screen.getByRole('button', { name: /^0 bots$/i }));
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 0 / 17+');
+  expect(screen.getByRole('button', { name: /^2 players$/i })).toHaveAttribute('aria-pressed', 'true');
 });
 
 test('reset button clears picked factions and returns reach to 0', () => {
