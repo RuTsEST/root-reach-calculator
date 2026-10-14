@@ -58,10 +58,10 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
                 aria-hidden
                 sx={{
                     position: "absolute",
-                    // Slightly outside the NE circumference so the curved Fab edge
-                    // reads as cutting the badge ~in half (not mostly tucked in).
-                    top: "8%",
-                    right: "8%",
+                    // Just outside the NE circumference so the curved Fab edge
+                    // reads as cutting the badge roughly in half.
+                    top: "12%",
+                    right: "12%",
                     transform: "translate(50%, -50%)",
                     width: badgeSize,
                     height: badgeSize,
