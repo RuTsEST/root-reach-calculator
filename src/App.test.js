@@ -97,6 +97,13 @@ test('2 bots selects matching clockwork threshold', () => {
   expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 0 / 14+');
 });
 
+test('defaults to 0 bots with 4 players selected', () => {
+  const { container } = render(<App />);
+  expect(screen.getByRole('button', { name: /^0 bots$/i })).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getByRole('button', { name: /^4 players$/i })).toHaveAttribute('aria-pressed', 'true');
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 0 / 21+');
+});
+
 test('illegal player counts are disabled for current bot count', () => {
   render(<App />);
   // No bots: player 1 illegal; 2–6 legal
