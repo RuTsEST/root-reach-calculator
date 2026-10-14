@@ -22,3 +22,7 @@ npm run build && npx gh-pages -d build
 ```
 
 Verify the faction images are present in `build/static/media/` before deploying. GitHub Pages CDN can take a few minutes to propagate.
+
+## Analytics
+
+Privacy-friendly visit tracking via [GoatCounter](https://www.goatcounter.com/) (no cookies, no consent banner). Dashboard: https://ruts.goatcounter.com
