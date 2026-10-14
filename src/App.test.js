@@ -45,6 +45,26 @@ test('ban mode: clicking a faction bans it without adding reach', () => {
   expect(indicator).toHaveTextContent('Below target');
 });
 
+test('ban mode: can ban a faction grayed out as unavailable', () => {
+  const { container } = render(<App />);
+  // Fill all 4 player slots so remaining factions are IS_NOT_AVAILABLE
+  fireEvent.click(container.querySelector('[data-cy="marquise"]'));
+  fireEvent.click(container.querySelector('[data-cy="duchy"]'));
+  fireEvent.click(container.querySelector('[data-cy="hundreds"]'));
+  fireEvent.click(container.querySelector('[data-cy="eyrie"]'));
+
+  const alliance = container.querySelector('[data-cy="alliance"]');
+  expect(alliance).toBeDisabled();
+
+  fireEvent.click(screen.getByRole('button', { name: /^ban$/i }));
+  expect(alliance).not.toBeDisabled();
+
+  fireEvent.click(alliance);
+  expect(alliance).not.toBeDisabled();
+  expect(alliance.querySelector('[data-testid="NotInterestedOutlinedIcon"]')).toBeInTheDocument();
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 34 / 21+');
+});
+
 test('switching to 1 Bot mode sets required reach to 8', () => {
   const { container } = render(<App />);
   fireEvent.click(screen.getByRole('button', { name: /1 bot/i }));

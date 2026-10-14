@@ -25,7 +25,7 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
              value={faction.reach}
              aria-label={faction.label}
              sx={{width: widthAndHeight, height: widthAndHeight, opacity: opacity}}
-             disabled={faction.status === IS_NOT_AVAILABLE}
+             disabled={!isBanMode && faction.status === IS_NOT_AVAILABLE}
              data-cy={faction.name}
         >
             <Badge
