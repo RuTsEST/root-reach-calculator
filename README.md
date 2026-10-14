@@ -24,8 +24,6 @@ npm test         # unit tests
 
 Pushes to `master` build the CRA app and deploy to GitHub Pages via GitHub Actions (`.github/workflows/deploy-pages.yml`). You can also run the workflow manually from the Actions tab (`workflow_dispatch`).
 
-**One-time repo setting (required once):** GitHub → **Settings** → **Pages** → **Build and deployment** → **Source** → **GitHub Actions**. Until that is set, the workflow can run but Pages will not serve the new deploy.
-
 `package.json` `homepage` is already `https://rutsest.github.io/root-reach-calculator/` so asset paths stay correct for the project site.
 
 ### Manual fallback
