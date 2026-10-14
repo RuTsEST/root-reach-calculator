@@ -23,14 +23,21 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
     const fabColor = getFactionButtonColor(faction);
 
     // Badge wraps Fab so ButtonBase overflow:hidden cannot clip the digits.
-    // Modest translate keeps the number on the Fab corner (above the art, not under
-    // neighboring fabs). zIndex keeps badges above later grid Fabs that would
-    // otherwise paint over the overhang.
+    // Fab z-index must stay at 0 so the reach badge (z-index 1) paints above it
+    // and above neighboring Fabs; otherwise the digits sit behind the circles.
     return (
         <Badge
             overlap="circular"
             badgeContent={
-                <Avatar sx={{width: "2em", height: "2em", fontSize: badgeFontSize, backgroundColor: fabColor}}>
+                <Avatar
+                    sx={{
+                        width: "2em",
+                        height: "2em",
+                        fontSize: badgeFontSize,
+                        lineHeight: 1,
+                        backgroundColor: fabColor,
+                    }}
+                >
                     {faction.reach}
                 </Avatar>
             }
@@ -38,15 +45,20 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
                 "& .MuiBadge-badge": {
                     top: 0,
                     right: 0,
-                    transform: "translate(35%, -35%)",
-                    zIndex: 10,
+                    transform: "translate(30%, -30%)",
+                    zIndex: 1,
                 },
             }}
         >
             <Fab onClick={() => handleFactionClick(faction.name)}
                  value={faction.reach}
                  aria-label={faction.label}
-                 sx={{width: widthAndHeight, height: widthAndHeight, opacity: opacity}}
+                 sx={{
+                     width: widthAndHeight,
+                     height: widthAndHeight,
+                     opacity: opacity,
+                     zIndex: 0,
+                 }}
                  disabled={isPickDisabled}
                  data-cy={faction.name}
             >
