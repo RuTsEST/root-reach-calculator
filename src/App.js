@@ -13,10 +13,10 @@ const ReachIndicator = ({ reach, requiredReach }) => {
             className="reach"
             data-cy="reach-indicator"
             aria-live="polite"
-            style={{ color: isMet ? '#4da251' : '#b66969', margin: 0 }}
+            style={{ color: isMet ? '#4da251' : '#b66969' }}
         >
             <span className="reach-values">Reach: {reach} / {requiredReach}+</span>
-            <span className="reach-status"> · {statusCue}</span>
+            <span className="reach-status">{statusCue}</span>
         </h3>
     );
 };
@@ -68,20 +68,18 @@ function App() {
         <Box sx={{ height: '100dvh', display: 'flex', flexDirection: 'column', maxWidth: 'sm', margin: '0 auto', minWidth: '320px' }}>
             <CssBaseline />
             <Box className="app-header">
-                <Box className="app-header-controls">
-                    <ToggleButtonGroup
-                        exclusive
-                        value={isBanMode ? 'ban' : 'pick'}
-                        onChange={(_, v) => { if (v !== null) setIsBanMode(v === 'ban'); }}
-                    >
-                        <ToggleButton value='ban'>Ban</ToggleButton>
-                        <ToggleButton value='pick'>Pick</ToggleButton>
-                    </ToggleButtonGroup>
-                    <IconButton onClick={handleReset} size="small" aria-label="reset">
-                        <RefreshIcon />
-                    </IconButton>
-                </Box>
+                <ToggleButtonGroup
+                    exclusive
+                    value={isBanMode ? 'ban' : 'pick'}
+                    onChange={(_, v) => { if (v !== null) setIsBanMode(v === 'ban'); }}
+                >
+                    <ToggleButton value='ban'>Ban</ToggleButton>
+                    <ToggleButton value='pick'>Pick</ToggleButton>
+                </ToggleButtonGroup>
                 <ReachIndicator reach={reach} requiredReach={requiredReach} />
+                <IconButton onClick={handleReset} size="small" aria-label="reset">
+                    <RefreshIcon />
+                </IconButton>
             </Box>
             <Box sx={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
                 <ChooseFactionButtons
