@@ -23,6 +23,7 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
     return (
         <Fab onClick={() => handleFactionClick(faction.name)}
              value={faction.reach}
+             aria-label={faction.label}
              sx={{width: widthAndHeight, height: widthAndHeight, opacity: opacity}}
              disabled={faction.status === IS_NOT_AVAILABLE}
              data-cy={faction.name}
@@ -40,6 +41,7 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
             >
                 <FactionStatusOverlay status={faction.status} />
                 <Avatar
+                    alt={faction.label}
                     sx={{width: "90%", height: "90%"}}
                     imgProps={{sx: {objectFit: "contain"}}}
                     src={faction.image}
