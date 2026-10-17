@@ -161,13 +161,12 @@ test('reach indicator has aria-live for status changes', () => {
   expect(indicator).toHaveAttribute('aria-live', 'polite');
 });
 
-test('footer shows unofficial disclaimer and copyright', () => {
-  const { container } = render(<App />);
-  const disclaimer = container.querySelector('[data-cy="disclaimer"]');
-  expect(disclaimer).toBeInTheDocument();
-  expect(disclaimer).toHaveTextContent(/Unofficial fan tool/);
-  expect(disclaimer).toHaveTextContent(/not affiliated with Leder Games or Root/);
-  expect(disclaimer).toHaveTextContent(/© 2026 RuTsEST/);
+test('footer is players and bots only (no disclaimer line)', () => {
+  const { container, queryByLabelText, queryByText } = render(<App />);
+  expect(container.querySelector('[data-cy="disclaimer"]')).not.toBeInTheDocument();
+  expect(queryByText(/Unofficial fan tool/)).not.toBeInTheDocument();
+  expect(queryByLabelText('Players')).toBeInTheDocument();
+  expect(queryByLabelText('Bots')).toBeInTheDocument();
 });
 
 test('vagabond2 stays unavailable until vagabond1 is picked', () => {
