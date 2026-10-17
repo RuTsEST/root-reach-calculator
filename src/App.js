@@ -102,6 +102,9 @@ function App() {
                     selectedValue={selectedValue}
                     handleToggleButtonChange={handleToggleButtonChange}
                 />
+                <p className="app-disclaimer" data-cy="disclaimer">
+                    Unofficial fan tool · not affiliated with Leder Games or Root · © 2026 RuTsEST
+                </p>
             </Box>
         </Box>
     );
