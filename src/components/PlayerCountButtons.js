@@ -78,6 +78,7 @@ export const PlayerCountButtons = ({ selectedValue, handleToggleButtonChange }) 
 
     return (
         <Stack
+            className="player-count-bar"
             direction="row"
             flexWrap="nowrap"
             alignItems="center"

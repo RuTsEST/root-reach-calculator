@@ -88,14 +88,16 @@ function App() {
                     <RefreshIcon />
                 </IconButton>
             </Box>
-            <Box sx={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
-                <ChooseFactionButtons
-                    key={resetKey}
-                    playerCount={playerCount}
-                    setReach={setReach}
-                    requiredReach={requiredReach}
-                    isBanMode={isBanMode}
-                />
+            <Box className="app-main">
+                <Box className="faction-grid-wrap">
+                    <ChooseFactionButtons
+                        key={resetKey}
+                        playerCount={playerCount}
+                        setReach={setReach}
+                        requiredReach={requiredReach}
+                        isBanMode={isBanMode}
+                    />
+                </Box>
             </Box>
             <Box className="app-footer">
                 <PlayerCountButtons

@@ -142,17 +142,7 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, isBa
     const lastRowStart = lastRowCount > 0 ? factionArray.length - lastRowCount : factionArray.length;
 
     return (
-        <Box sx={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(6, 1fr)',
-            gridAutoRows: 'auto',
-            justifyItems: 'center',
-            alignItems: 'center',
-            flex: '0 0 auto',
-            // Reach badges overhang by half their size; button margin covers that.
-            py: 0.5,
-            px: 0.25,
-        }}>
+        <Box className="faction-grid">
             {factionArray.map((faction, index) => {
                 const isLastRow = lastRowCount > 0 && index >= lastRowStart;
                 const posInLastRow = isLastRow ? index - lastRowStart : 0;

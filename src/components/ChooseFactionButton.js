@@ -16,12 +16,19 @@ const getFactionButtonColor = (faction) => {
 export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) => {
     // Shrink/gray only when pick mode disables the fab. In ban mode, keep full size
     // so "unavailable" factions still read as clickable ban targets.
+    // Sizes come from CSS variables (see App.css) so short viewports can densify.
     const isPickDisabled = !isBanMode && faction.status === IS_NOT_AVAILABLE;
-    const widthAndHeight = isPickDisabled ? "4em" : "7em"
-    const badgeFontSize = isPickDisabled ? "small" : "large";
-    const badgeSize = isPickDisabled ? 22 : 32;
+    const widthAndHeight = isPickDisabled
+        ? "var(--faction-fab-size-disabled)"
+        : "var(--faction-fab-size)";
+    const badgeSize = isPickDisabled
+        ? "var(--faction-badge-size-disabled)"
+        : "var(--faction-badge-size)";
+    const badgeFontSize = isPickDisabled ? "0.75rem" : "1.05rem";
     // Room for the half of the badge that sits outside the Fab circle.
-    const badgeOverhang = badgeSize / 2;
+    const badgeOverhang = isPickDisabled
+        ? "calc(var(--faction-badge-size-disabled) / 2)"
+        : "calc(var(--faction-badge-size) / 2)";
     const opacity = isPickDisabled ? "50%" : "100%"
     const fabColor = getFactionButtonColor(faction);
 
@@ -32,7 +39,7 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
             position: "relative",
             display: "inline-flex",
             flexShrink: 0,
-            m: `${badgeOverhang}px`,
+            m: badgeOverhang,
         }}>
             <Fab onClick={() => handleFactionClick(faction.name)}
                  value={faction.reach}
