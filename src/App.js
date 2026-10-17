@@ -4,6 +4,8 @@ import { Box, CssBaseline, IconButton, ToggleButton, ToggleButtonGroup } from "@
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { PlayerCountButtons } from "./components/PlayerCountButtons";
 import { ChooseFactionButtons } from "./components/ChooseFactionButtons";
+import { DEFAULT_SELECTION, REACH_THRESHOLDS } from "./data/reachThresholds";
+import { loadSession, saveSession } from "./sessionStorage";
 
 const ReachIndicator = ({ reach, requiredReach }) => {
     const isMet = reach >= requiredReach;
@@ -21,46 +23,51 @@ const ReachIndicator = ({ reach, requiredReach }) => {
     );
 };
 
-const idToValuesMap = {
-    'player2': { requiredReach: 17, playerCount: 2 },
-    'player3': { requiredReach: 18, playerCount: 3 },
-    'player4': { requiredReach: 21, playerCount: 4 },
-    'player5': { requiredReach: 25, playerCount: 5 },
-    'player6': { requiredReach: 28, playerCount: 6 },
-
-    // Clockwork reach thresholds are unofficial estimates based on feel,
-    // not sourced from official Root rules or the Clockwork expansion rulebook.
-    '1clockwork1': { requiredReach: 8, playerCount: 1 },
-    '1clockwork2': { requiredReach: 12, playerCount: 2 },
-    '1clockwork3': { requiredReach: 14, playerCount: 3 },
-    '1clockwork4': { requiredReach: 16, playerCount: 4 },
-
-    '2clockwork1': { requiredReach: 9, playerCount: 1 },
-    '2clockwork2': { requiredReach: 14, playerCount: 2 },
-    '2clockwork3': { requiredReach: 18, playerCount: 3 },
-    '2clockwork4': { requiredReach: 21, playerCount: 4 },
-};
+function selectionFromSession(session) {
+    const key = REACH_THRESHOLDS[session.selectedValue]
+        ? session.selectedValue
+        : DEFAULT_SELECTION;
+    const values = REACH_THRESHOLDS[key];
+    return {
+        selectedValue: key,
+        requiredReach: values.requiredReach,
+        playerCount: values.playerCount,
+        isBanMode: session.isBanMode,
+    };
+}
 
 function App() {
+    const initial = React.useMemo(() => selectionFromSession(loadSession()), []);
+
     const [reach, setReach] = React.useState(0);
-    const [requiredReach, setRequiredReach] = React.useState(21);
-    const [playerCount, setPlayerCount] = React.useState(4);
-    const [selectedValue, setSelectedValue] = React.useState('player4');
-    const [isBanMode, setIsBanMode] = React.useState(false);
+    const [requiredReach, setRequiredReach] = React.useState(initial.requiredReach);
+    const [playerCount, setPlayerCount] = React.useState(initial.playerCount);
+    const [selectedValue, setSelectedValue] = React.useState(initial.selectedValue);
+    const [isBanMode, setIsBanMode] = React.useState(initial.isBanMode);
     const [resetKey, setResetKey] = React.useState(0);
 
     const handleToggleButtonChange = React.useCallback((event, newValue) => {
         if (newValue !== null) {
-            const values = idToValuesMap[newValue];
+            const values = REACH_THRESHOLDS[newValue];
             if (values) {
                 setSelectedValue(newValue);
                 setRequiredReach(values.requiredReach);
                 setPlayerCount(values.playerCount);
+                saveSession({ selectedValue: newValue });
             }
         }
     }, []);
 
+    const handleBanModeChange = React.useCallback((_, v) => {
+        if (v === null) return;
+        const next = v === 'ban';
+        setIsBanMode(next);
+        saveSession({ isBanMode: next });
+    }, []);
+
     const handleReset = () => {
+        // Clear picks/bans from session; keep mode and player/bot selection.
+        saveSession({ factionStatuses: {} });
         setResetKey(k => k + 1);
     };
 
@@ -71,7 +78,7 @@ function App() {
                 <ToggleButtonGroup
                     exclusive
                     value={isBanMode ? 'ban' : 'pick'}
-                    onChange={(_, v) => { if (v !== null) setIsBanMode(v === 'ban'); }}
+                    onChange={handleBanModeChange}
                 >
                     <ToggleButton value='ban'>Ban</ToggleButton>
                     <ToggleButton value='pick'>Pick</ToggleButton>
@@ -95,6 +102,9 @@ function App() {
                     selectedValue={selectedValue}
                     handleToggleButtonChange={handleToggleButtonChange}
                 />
+                <p className="app-disclaimer" data-cy="disclaimer">
+                    Unofficial fan tool · not affiliated with Leder Games or Root · © 2026 RuTsEST
+                </p>
             </Box>
         </Box>
     );

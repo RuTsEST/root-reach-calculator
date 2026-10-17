@@ -1,123 +1,39 @@
 import {Box} from "@mui/material";
-import eyrieImage from "../faction-images/eyrie.png";
-import corvidImage from "../faction-images/corvid.png";
-import allianceImage from "../faction-images/alliance.png";
-import cultImage from "../faction-images/cult.png";
-import duchyImage from "../faction-images/duchy.png";
-import riverfolkImage from "../faction-images/riverfolk.png";
-import marquiseImage from "../faction-images/marquise.png";
-import vagabondImage from "../faction-images/vagabond.png";
-import vagabond2Image from "../faction-images/vagabond2.png";
-import hundredsImage from "../faction-images/hundreds.png";
-import keepersImage from "../faction-images/keepers.png";
-import lilypadImage from "../faction-images/lilypad.png";
-import twilightImage from "../faction-images/twilight.png";
-import knavesImage from "../faction-images/knaves.png";
 import * as React from 'react';
 import {IS_AVAILABLE, IS_BANNED, IS_NOT_AVAILABLE, IS_PICKED} from "../constants";
+import {createInitialFactions} from "../data/factions";
+import {loadSession, saveSession} from "../sessionStorage";
 import {ChooseFactionButton} from "./ChooseFactionButton";
 
-export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, isBanMode}) => {
-    const [factions, setFactions] = React.useState({
-        marquise: {
-            name: "marquise",
-            label: "Marquise",
-            image: marquiseImage,
-            reach: 10,
-            status: IS_AVAILABLE
-        },
-        eyrie: {
-            name: "eyrie",
-            label: "Eyrie",
-            image: eyrieImage,
-            reach: 7,
-            status: IS_AVAILABLE
-        },
-        alliance: {
-            name: "alliance",
-            label: "Alliance",
-            image: allianceImage,
-            reach: 3,
-            status: IS_AVAILABLE
-        },
-        vagabond1: {
-            name: "vagabond1",
-            label: "Vagabond",
-            image: vagabondImage,
-            reach: 5,
-            status: IS_NOT_AVAILABLE
-        },
-        riverfolk: {
-            name: "riverfolk",
-            label: "Riverfolk",
-            image: riverfolkImage,
-            reach: 5,
-            status: IS_NOT_AVAILABLE
-        },
-        cult: {
-            name: "cult",
-            label: "Cult",
-            image: cultImage,
-            reach: 2,
-            status: IS_NOT_AVAILABLE
-        },
-        corvid: {
-            name: "corvid",
-            label: "Corvid",
-            image: corvidImage,
-            reach: 3,
-            status: IS_AVAILABLE
-        },
-        duchy: {
-            name: "duchy",
-            label: "Duchy",
-            image: duchyImage,
-            reach: 8,
-            status: IS_AVAILABLE
-        },
-        vagabond2: {
-            name: "vagabond2",
-            label: "Vagabond 2",
-            image: vagabond2Image,
-            reach: 2,
-            status: IS_NOT_AVAILABLE
-        },
-        hundreds: {
-            name: "hundreds",
-            label: "Hundreds",
-            image: hundredsImage,
-            reach: 9,
-            status: IS_AVAILABLE
-        },
-        keepers: {
-            name: "keepers",
-            label: "Keepers",
-            image: keepersImage,
-            reach: 8,
-            status: IS_AVAILABLE
-        },
-        lilypad: {
-            name: "lilypad",
-            label: "Lilypad",
-            image: lilypadImage,
-            reach: 7,
-            status: IS_AVAILABLE
-        },
-        twilight: {
-            name: "twilight",
-            label: "Twilight",
-            image: twilightImage,
-            reach: 4,
-            status: IS_AVAILABLE
-        },
-        knaves: {
-            name: "knaves",
-            label: "Knaves",
-            image: knavesImage,
-            reach: 4,
-            status: IS_AVAILABLE
+const VALID_STATUSES = new Set([IS_PICKED, IS_BANNED, IS_AVAILABLE, IS_NOT_AVAILABLE]);
+
+function factionsFromSession() {
+    const factions = createInitialFactions();
+    const { factionStatuses } = loadSession();
+    for (const key of Object.keys(factionStatuses)) {
+        if (factions[key] && VALID_STATUSES.has(factionStatuses[key])) {
+            // Only restore explicit picks/bans; availability is recomputed below.
+            if (factionStatuses[key] === IS_PICKED || factionStatuses[key] === IS_BANNED) {
+                factions[key].status = factionStatuses[key];
+            }
         }
-    });
+    }
+    return factions;
+}
+
+function persistFactionStatuses(factions) {
+    const factionStatuses = {};
+    for (const key of Object.keys(factions)) {
+        const status = factions[key].status;
+        if (status === IS_PICKED || status === IS_BANNED) {
+            factionStatuses[key] = status;
+        }
+    }
+    saveSession({ factionStatuses });
+}
+
+export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, isBanMode}) => {
+    const [factions, setFactions] = React.useState(() => factionsFromSession());
 
     const setAvailableFactions = React.useCallback((previousFactions) => {
         const factions = {...previousFactions};
@@ -209,6 +125,7 @@ export const ChooseFactionButtons = ({playerCount, setReach, requiredReach, isBa
 
         newFactions = setAvailableFactions(newFactions);
         setFactions(newFactions);
+        persistFactionStatuses(newFactions);
     }
 
     React.useEffect(() => {

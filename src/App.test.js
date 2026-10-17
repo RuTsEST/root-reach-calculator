@@ -1,5 +1,11 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import App from './App';
+import { STORAGE_KEY } from './sessionStorage';
+import { IS_BANNED, IS_PICKED } from './constants';
+
+beforeEach(() => {
+  window.sessionStorage.clear();
+});
 
 test('reach indicator renders with initial value', () => {
   const { container } = render(<App />);
@@ -153,4 +159,90 @@ test('reach indicator has aria-live for status changes', () => {
   const { container } = render(<App />);
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
   expect(indicator).toHaveAttribute('aria-live', 'polite');
+});
+
+test('footer shows unofficial disclaimer and copyright', () => {
+  const { container } = render(<App />);
+  const disclaimer = container.querySelector('[data-cy="disclaimer"]');
+  expect(disclaimer).toBeInTheDocument();
+  expect(disclaimer).toHaveTextContent(/Unofficial fan tool/);
+  expect(disclaimer).toHaveTextContent(/not affiliated with Leder Games or Root/);
+  expect(disclaimer).toHaveTextContent(/© 2026 RuTsEST/);
+});
+
+test('vagabond2 stays unavailable until vagabond1 is picked', () => {
+  const { container } = render(<App />);
+  const vagabond2 = container.querySelector('[data-cy="vagabond2"]');
+  expect(vagabond2).toBeDisabled();
+
+  fireEvent.click(container.querySelector('[data-cy="marquise"]'));
+  fireEvent.click(container.querySelector('[data-cy="vagabond1"]'));
+  expect(container.querySelector('[data-cy="vagabond1"]')).not.toBeDisabled();
+  expect(container.querySelector('[data-cy="vagabond2"]')).not.toBeDisabled();
+
+  fireEvent.click(container.querySelector('[data-cy="vagabond2"]'));
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 17 / 21+');
+});
+
+test('picking a vagabond makes knaves unavailable', () => {
+  const { container } = render(<App />);
+  fireEvent.click(container.querySelector('[data-cy="marquise"]'));
+  fireEvent.click(container.querySelector('[data-cy="vagabond1"]'));
+
+  const knaves = container.querySelector('[data-cy="knaves"]');
+  expect(knaves).toBeDisabled();
+});
+
+test('picking knaves makes both vagabonds unavailable', () => {
+  const { container } = render(<App />);
+  fireEvent.click(container.querySelector('[data-cy="knaves"]'));
+
+  expect(container.querySelector('[data-cy="vagabond1"]')).toBeDisabled();
+  expect(container.querySelector('[data-cy="vagabond2"]')).toBeDisabled();
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 4 / 21+');
+});
+
+test('Homeland factions contribute their catalog reach', () => {
+  const { container } = render(<App />);
+  // lilypad(7) + twilight(4) + knaves(4) = 15
+  fireEvent.click(container.querySelector('[data-cy="lilypad"]'));
+  fireEvent.click(container.querySelector('[data-cy="twilight"]'));
+  fireEvent.click(container.querySelector('[data-cy="knaves"]'));
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 15 / 21+');
+});
+
+test('sessionStorage restores picks, bans, mode, and player-bot selection', () => {
+  window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+    selectedValue: 'player3',
+    isBanMode: true,
+    factionStatuses: {
+      marquise: IS_PICKED,
+      alliance: IS_BANNED,
+    },
+  }));
+
+  const { container } = render(<App />);
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 10 / 18+');
+  expect(screen.getByRole('button', { name: /^ban$/i })).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getByRole('button', { name: /^3 players$/i })).toHaveAttribute('aria-pressed', 'true');
+  expect(container.querySelector('[data-cy="alliance"]')
+    .querySelector('[data-testid="NotInterestedOutlinedIcon"]')).toBeInTheDocument();
+});
+
+test('reset clears persisted faction picks and bans', () => {
+  const { container } = render(<App />);
+  fireEvent.click(container.querySelector('[data-cy="marquise"]'));
+  fireEvent.click(screen.getByRole('button', { name: /^ban$/i }));
+  fireEvent.click(container.querySelector('[data-cy="alliance"]'));
+
+  const before = JSON.parse(window.sessionStorage.getItem(STORAGE_KEY));
+  expect(before.factionStatuses.marquise).toBe(IS_PICKED);
+  expect(before.factionStatuses.alliance).toBe(IS_BANNED);
+
+  fireEvent.click(screen.getByRole('button', { name: /reset/i }));
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 0 / 21+');
+
+  const after = JSON.parse(window.sessionStorage.getItem(STORAGE_KEY));
+  expect(after.factionStatuses).toEqual({});
+  expect(after.isBanMode).toBe(true);
 });
