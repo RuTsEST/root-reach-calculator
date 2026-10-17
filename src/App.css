@@ -26,12 +26,17 @@
 /* iPhone SE (667) and similar short viewports: fit 5 fab rows without scroll */
 @media (max-height: 700px) {
   :root {
-    --faction-fab-size: 4.85em;
-    --faction-fab-size-disabled: 3.1em;
-    --faction-badge-size: 24px;
+    --faction-fab-size: 5.35em;
+    --faction-fab-size-disabled: 3.35em;
+    --faction-badge-size: 26px;
     --faction-badge-size-disabled: 18px;
-    --faction-grid-py: 0.15rem;
+    --faction-grid-py: 0.2rem;
     --faction-grid-px: 0.1rem;
+  }
+
+  /* Top-align on short viewports so spare height isn't empty bands */
+  .faction-grid-wrap {
+    margin-block: 0;
   }
 }
 
