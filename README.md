@@ -38,4 +38,4 @@ Build explicitly first — the `predeploy` hook is unreliable when the dev serve
 
 ## Analytics
 
-Privacy-friendly visit tracking via [GoatCounter](https://www.goatcounter.com/) (no cookies, no consent banner). Counts load only on the live GitHub Pages host (`rutsest.github.io`), not on localhost or other hosts. Dashboard: https://ruts.goatcounter.com
+Privacy-friendly visit tracking via [GoatCounter](https://www.goatcounter.com/) (no cookies, no consent banner). Dashboard: https://ruts.goatcounter.com
