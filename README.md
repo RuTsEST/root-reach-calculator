@@ -4,7 +4,7 @@ A faction picker for the [Root](https://ledergames.com/products/root-a-game-of-w
 
 Live at **https://rutsest.github.io/root-reach-calculator/**
 
-> Unofficial fan-made tool, not affiliated with Leder Games.
+> Unofficial fan-made tool, not affiliated with Leder Games or [Root](https://ledergames.com/products/root-a-game-of-woodland-might-and-right). Released under the [MIT License](./LICENSE).
 
 ## How to use
 
