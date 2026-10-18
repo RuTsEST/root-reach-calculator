@@ -1,11 +1,20 @@
 import './App.css';
 import * as React from "react";
 import { Box, CssBaseline, IconButton, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { PlayerCountButtons } from "./components/PlayerCountButtons";
 import { ChooseFactionButtons } from "./components/ChooseFactionButtons";
+import { ThemeToggleButton } from "./components/ThemeToggleButton";
 import { DEFAULT_SELECTION, REACH_THRESHOLDS } from "./data/reachThresholds";
 import { loadSession, saveSession } from "./sessionStorage";
+import {
+    getSystemPrefersDark,
+    loadThemeOverride,
+    resolveMode,
+    saveThemeOverride,
+    themeForMode,
+} from "./theme";
 
 const ReachIndicator = ({ reach, requiredReach }) => {
     const isMet = reach >= requiredReach;
@@ -46,6 +55,34 @@ function App() {
     const [isBanMode, setIsBanMode] = React.useState(initial.isBanMode);
     const [resetKey, setResetKey] = React.useState(0);
 
+    const [themeOverride, setThemeOverride] = React.useState(() => loadThemeOverride());
+    const [systemPrefersDark, setSystemPrefersDark] = React.useState(() => getSystemPrefersDark());
+    const mode = resolveMode(themeOverride, systemPrefersDark);
+    const theme = themeForMode(mode);
+
+    React.useEffect(() => {
+        if (themeOverride !== null) return undefined;
+        const mq = window.matchMedia('(prefers-color-scheme: dark)');
+        const onChange = (event) => setSystemPrefersDark(event.matches);
+        if (typeof mq.addEventListener === 'function') {
+            mq.addEventListener('change', onChange);
+            return () => mq.removeEventListener('change', onChange);
+        }
+        mq.addListener(onChange);
+        return () => mq.removeListener(onChange);
+    }, [themeOverride]);
+
+    React.useEffect(() => {
+        document.documentElement.setAttribute('data-theme', mode);
+        document.documentElement.style.colorScheme = mode;
+    }, [mode]);
+
+    const handleThemeToggle = React.useCallback(() => {
+        const next = mode === 'dark' ? 'light' : 'dark';
+        setThemeOverride(next);
+        saveThemeOverride(next);
+    }, [mode]);
+
     const handleToggleButtonChange = React.useCallback((event, newValue) => {
         if (newValue !== null) {
             const values = REACH_THRESHOLDS[newValue];
@@ -72,40 +109,57 @@ function App() {
     };
 
     return (
-        <Box sx={{ height: '100dvh', display: 'flex', flexDirection: 'column', maxWidth: 'sm', margin: '0 auto', minWidth: '320px' }}>
+        <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Box className="app-header">
-                <ToggleButtonGroup
-                    exclusive
-                    value={isBanMode ? 'ban' : 'pick'}
-                    onChange={handleBanModeChange}
-                >
-                    <ToggleButton value='ban'>Ban</ToggleButton>
-                    <ToggleButton value='pick'>Pick</ToggleButton>
-                </ToggleButtonGroup>
-                <ReachIndicator reach={reach} requiredReach={requiredReach} />
-                <IconButton onClick={handleReset} size="small" aria-label="reset">
-                    <RefreshIcon />
-                </IconButton>
-            </Box>
-            <Box className="app-main">
-                <Box className="faction-grid-wrap">
-                    <ChooseFactionButtons
-                        key={resetKey}
-                        playerCount={playerCount}
-                        setReach={setReach}
-                        requiredReach={requiredReach}
-                        isBanMode={isBanMode}
+            <Box
+                data-theme={mode}
+                sx={{
+                    height: '100dvh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    maxWidth: 'sm',
+                    margin: '0 auto',
+                    minWidth: '320px',
+                    bgcolor: 'background.default',
+                    color: 'text.primary',
+                }}
+            >
+                <Box className="app-header">
+                    <ToggleButtonGroup
+                        exclusive
+                        value={isBanMode ? 'ban' : 'pick'}
+                        onChange={handleBanModeChange}
+                    >
+                        <ToggleButton value='ban'>Ban</ToggleButton>
+                        <ToggleButton value='pick'>Pick</ToggleButton>
+                    </ToggleButtonGroup>
+                    <ReachIndicator reach={reach} requiredReach={requiredReach} />
+                    <Box className="app-header-actions">
+                        <ThemeToggleButton mode={mode} onToggle={handleThemeToggle} />
+                        <IconButton onClick={handleReset} size="small" aria-label="reset">
+                            <RefreshIcon />
+                        </IconButton>
+                    </Box>
+                </Box>
+                <Box className="app-main">
+                    <Box className="faction-grid-wrap">
+                        <ChooseFactionButtons
+                            key={resetKey}
+                            playerCount={playerCount}
+                            setReach={setReach}
+                            requiredReach={requiredReach}
+                            isBanMode={isBanMode}
+                        />
+                    </Box>
+                </Box>
+                <Box className="app-footer">
+                    <PlayerCountButtons
+                        selectedValue={selectedValue}
+                        handleToggleButtonChange={handleToggleButtonChange}
                     />
                 </Box>
             </Box>
-            <Box className="app-footer">
-                <PlayerCountButtons
-                    selectedValue={selectedValue}
-                    handleToggleButtonChange={handleToggleButtonChange}
-                />
-            </Box>
-        </Box>
+        </ThemeProvider>
     );
 }
 
