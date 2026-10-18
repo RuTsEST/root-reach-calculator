@@ -267,44 +267,58 @@ test('reset clears persisted faction picks and bans', () => {
   expect(after.isBanMode).toBe(true);
 });
 
-test('system dark preference opens the app in dark mode with no override', () => {
+test('default theme preference is system; OS dark opens dark', () => {
   mockMatchMedia(true);
   const { container } = render(<App />);
   expect(container.querySelector('[data-theme="dark"]')).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: /switch to light mode/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /theme: system/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /theme: system/i }))
+    .toHaveAttribute('data-theme-preference', 'system');
   expect(window.sessionStorage.getItem(THEME_STORAGE_KEY)).toBeNull();
 });
 
-test('system light preference opens the app in light mode with no override', () => {
+test('default theme preference is system; OS light opens light', () => {
   mockMatchMedia(false);
   const { container } = render(<App />);
   expect(container.querySelector('[data-theme="light"]')).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: /switch to dark mode/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /theme: system/i })).toBeInTheDocument();
 });
 
-test('theme toggle flips mode and persists override in sessionStorage', () => {
+test('theme toggle cycles system → light → dark → system and persists', () => {
   mockMatchMedia(false);
   const { container } = render(<App />);
   expect(container.querySelector('[data-theme="light"]')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /theme: system/i }))
+    .toHaveAttribute('data-theme-preference', 'system');
 
-  fireEvent.click(screen.getByRole('button', { name: /switch to dark mode/i }));
+  fireEvent.click(screen.getByRole('button', { name: /theme: system/i }));
+  expect(container.querySelector('[data-theme="light"]')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /theme: light/i }))
+    .toHaveAttribute('data-theme-preference', 'light');
+  expect(window.sessionStorage.getItem(THEME_STORAGE_KEY)).toBe('light');
+
+  fireEvent.click(screen.getByRole('button', { name: /theme: light/i }));
   expect(container.querySelector('[data-theme="dark"]')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /theme: dark/i }))
+    .toHaveAttribute('data-theme-preference', 'dark');
   expect(window.sessionStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
 
-  fireEvent.click(screen.getByRole('button', { name: /switch to light mode/i }));
+  fireEvent.click(screen.getByRole('button', { name: /theme: dark/i }));
   expect(container.querySelector('[data-theme="light"]')).toBeInTheDocument();
-  expect(window.sessionStorage.getItem(THEME_STORAGE_KEY)).toBe('light');
+  expect(screen.getByRole('button', { name: /theme: system/i }))
+    .toHaveAttribute('data-theme-preference', 'system');
+  expect(window.sessionStorage.getItem(THEME_STORAGE_KEY)).toBeNull();
 });
 
-test('stored theme override survives remount within the session', () => {
+test('stored theme preference survives remount within the session', () => {
   mockMatchMedia(false);
   window.sessionStorage.setItem(THEME_STORAGE_KEY, 'dark');
   const { container, unmount } = render(<App />);
   expect(container.querySelector('[data-theme="dark"]')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /theme: dark/i })).toBeInTheDocument();
 
   unmount();
   const again = render(<App />);
   expect(again.container.querySelector('[data-theme="dark"]')).toBeInTheDocument();
-  // Override wins over system light
   expect(window.sessionStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
 });

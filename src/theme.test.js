@@ -1,9 +1,10 @@
 import {
     THEME_STORAGE_KEY,
     getSystemPrefersDark,
-    loadThemeOverride,
+    loadThemePreference,
+    nextThemePreference,
     resolveMode,
-    saveThemeOverride,
+    saveThemePreference,
     themeForMode,
 } from './theme';
 
@@ -25,40 +26,46 @@ beforeEach(() => {
     mockMatchMedia(false);
 });
 
-test('resolveMode follows system when no override', () => {
-    expect(resolveMode(null, false)).toBe('light');
-    expect(resolveMode(null, true)).toBe('dark');
-    expect(resolveMode(undefined, true)).toBe('dark');
+test('default preference is system when storage is empty', () => {
+    expect(loadThemePreference()).toBe('system');
 });
 
-test('resolveMode prefers explicit override over system', () => {
+test('resolveMode follows system when preference is system', () => {
+    expect(resolveMode('system', false)).toBe('light');
+    expect(resolveMode('system', true)).toBe('dark');
+    expect(resolveMode(null, true)).toBe('dark');
+});
+
+test('resolveMode prefers explicit light/dark over system', () => {
     expect(resolveMode('light', true)).toBe('light');
     expect(resolveMode('dark', false)).toBe('dark');
 });
 
-test('loadThemeOverride returns null when unset', () => {
-    expect(loadThemeOverride()).toBeNull();
-});
-
-test('saveThemeOverride persists light and dark', () => {
-    saveThemeOverride('dark');
+test('saveThemePreference persists light and dark', () => {
+    saveThemePreference('dark');
     expect(window.sessionStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
-    expect(loadThemeOverride()).toBe('dark');
+    expect(loadThemePreference()).toBe('dark');
 
-    saveThemeOverride('light');
-    expect(loadThemeOverride()).toBe('light');
+    saveThemePreference('light');
+    expect(loadThemePreference()).toBe('light');
 });
 
-test('saveThemeOverride(null) clears stored override', () => {
-    saveThemeOverride('dark');
-    saveThemeOverride(null);
+test('saveThemePreference(system) clears storage so default is system', () => {
+    saveThemePreference('dark');
+    saveThemePreference('system');
     expect(window.sessionStorage.getItem(THEME_STORAGE_KEY)).toBeNull();
-    expect(loadThemeOverride()).toBeNull();
+    expect(loadThemePreference()).toBe('system');
 });
 
-test('loadThemeOverride ignores invalid stored values', () => {
+test('loadThemePreference ignores invalid stored values', () => {
     window.sessionStorage.setItem(THEME_STORAGE_KEY, 'sepia');
-    expect(loadThemeOverride()).toBeNull();
+    expect(loadThemePreference()).toBe('system');
+});
+
+test('nextThemePreference cycles system → light → dark → system', () => {
+    expect(nextThemePreference('system')).toBe('light');
+    expect(nextThemePreference('light')).toBe('dark');
+    expect(nextThemePreference('dark')).toBe('system');
 });
 
 test('getSystemPrefersDark reads matchMedia', () => {

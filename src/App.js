@@ -10,9 +10,10 @@ import { DEFAULT_SELECTION, REACH_THRESHOLDS } from "./data/reachThresholds";
 import { loadSession, saveSession } from "./sessionStorage";
 import {
     getSystemPrefersDark,
-    loadThemeOverride,
+    loadThemePreference,
     resolveMode,
-    saveThemeOverride,
+    saveThemePreference,
+    nextThemePreference,
     themeForMode,
 } from "./theme";
 
@@ -55,13 +56,13 @@ function App() {
     const [isBanMode, setIsBanMode] = React.useState(initial.isBanMode);
     const [resetKey, setResetKey] = React.useState(0);
 
-    const [themeOverride, setThemeOverride] = React.useState(() => loadThemeOverride());
+    const [themePreference, setThemePreference] = React.useState(() => loadThemePreference());
     const [systemPrefersDark, setSystemPrefersDark] = React.useState(() => getSystemPrefersDark());
-    const mode = resolveMode(themeOverride, systemPrefersDark);
+    const mode = resolveMode(themePreference, systemPrefersDark);
     const theme = themeForMode(mode);
 
     React.useEffect(() => {
-        if (themeOverride !== null) return undefined;
+        // Always watch OS changes so "system" stays live; harmless when overridden.
         const mq = window.matchMedia('(prefers-color-scheme: dark)');
         const onChange = (event) => setSystemPrefersDark(event.matches);
         if (typeof mq.addEventListener === 'function') {
@@ -70,18 +71,19 @@ function App() {
         }
         mq.addListener(onChange);
         return () => mq.removeListener(onChange);
-    }, [themeOverride]);
+    }, []);
 
     React.useEffect(() => {
         document.documentElement.setAttribute('data-theme', mode);
+        document.documentElement.setAttribute('data-theme-preference', themePreference);
         document.documentElement.style.colorScheme = mode;
-    }, [mode]);
+    }, [mode, themePreference]);
 
     const handleThemeToggle = React.useCallback(() => {
-        const next = mode === 'dark' ? 'light' : 'dark';
-        setThemeOverride(next);
-        saveThemeOverride(next);
-    }, [mode]);
+        const next = nextThemePreference(themePreference);
+        setThemePreference(next);
+        saveThemePreference(next);
+    }, [themePreference]);
 
     const handleToggleButtonChange = React.useCallback((event, newValue) => {
         if (newValue !== null) {
@@ -135,7 +137,7 @@ function App() {
                     </ToggleButtonGroup>
                     <ReachIndicator reach={reach} requiredReach={requiredReach} />
                     <Box className="app-header-actions">
-                        <ThemeToggleButton mode={mode} onToggle={handleThemeToggle} />
+                        <ThemeToggleButton preference={themePreference} onToggle={handleThemeToggle} />
                         <IconButton onClick={handleReset} size="small" aria-label="reset">
                             <RefreshIcon />
                         </IconButton>
