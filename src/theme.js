@@ -20,6 +20,24 @@ export const darkTheme = createTheme({
             paper: '#1e1e1e',
         },
     },
+    components: {
+        // Default Fab chrome is too bright on dark page; dim without touching art.
+        MuiFab: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: '#3a3a3a',
+                    color: 'rgba(255, 255, 255, 0.87)',
+                    '&:hover': {
+                        backgroundColor: '#454545',
+                    },
+                    '&.Mui-disabled': {
+                        backgroundColor: '#2c2c2c',
+                        color: 'rgba(255, 255, 255, 0.45)',
+                    },
+                },
+            },
+        },
+    },
 });
 
 /**
