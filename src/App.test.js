@@ -1,10 +1,25 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import App from './App';
 import { STORAGE_KEY } from './sessionStorage';
+import { THEME_STORAGE_KEY } from './theme';
 import { IS_BANNED, IS_PICKED } from './constants';
+
+function mockMatchMedia(matchesDark) {
+  window.matchMedia = jest.fn().mockImplementation((query) => ({
+    matches: query === '(prefers-color-scheme: dark)' ? matchesDark : false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  }));
+}
 
 beforeEach(() => {
   window.sessionStorage.clear();
+  mockMatchMedia(false);
 });
 
 test('reach indicator renders with initial value', () => {
@@ -250,4 +265,60 @@ test('reset clears persisted faction picks and bans', () => {
   const after = JSON.parse(window.sessionStorage.getItem(STORAGE_KEY));
   expect(after.factionStatuses).toEqual({});
   expect(after.isBanMode).toBe(true);
+});
+
+test('default theme preference is system; OS dark opens dark', () => {
+  mockMatchMedia(true);
+  const { container } = render(<App />);
+  expect(container.querySelector('[data-theme="dark"]')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /theme: system/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /theme: system/i }))
+    .toHaveAttribute('data-theme-preference', 'system');
+  expect(window.sessionStorage.getItem(THEME_STORAGE_KEY)).toBeNull();
+});
+
+test('default theme preference is system; OS light opens light', () => {
+  mockMatchMedia(false);
+  const { container } = render(<App />);
+  expect(container.querySelector('[data-theme="light"]')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /theme: system/i })).toBeInTheDocument();
+});
+
+test('theme toggle cycles system → light → dark → system and persists', () => {
+  mockMatchMedia(false);
+  const { container } = render(<App />);
+  expect(container.querySelector('[data-theme="light"]')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /theme: system/i }))
+    .toHaveAttribute('data-theme-preference', 'system');
+
+  fireEvent.click(screen.getByRole('button', { name: /theme: system/i }));
+  expect(container.querySelector('[data-theme="light"]')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /theme: light/i }))
+    .toHaveAttribute('data-theme-preference', 'light');
+  expect(window.sessionStorage.getItem(THEME_STORAGE_KEY)).toBe('light');
+
+  fireEvent.click(screen.getByRole('button', { name: /theme: light/i }));
+  expect(container.querySelector('[data-theme="dark"]')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /theme: dark/i }))
+    .toHaveAttribute('data-theme-preference', 'dark');
+  expect(window.sessionStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
+
+  fireEvent.click(screen.getByRole('button', { name: /theme: dark/i }));
+  expect(container.querySelector('[data-theme="light"]')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /theme: system/i }))
+    .toHaveAttribute('data-theme-preference', 'system');
+  expect(window.sessionStorage.getItem(THEME_STORAGE_KEY)).toBeNull();
+});
+
+test('stored theme preference survives remount within the session', () => {
+  mockMatchMedia(false);
+  window.sessionStorage.setItem(THEME_STORAGE_KEY, 'dark');
+  const { container, unmount } = render(<App />);
+  expect(container.querySelector('[data-theme="dark"]')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /theme: dark/i })).toBeInTheDocument();
+
+  unmount();
+  const again = render(<App />);
+  expect(again.container.querySelector('[data-theme="dark"]')).toBeInTheDocument();
+  expect(window.sessionStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
 });

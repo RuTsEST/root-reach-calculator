@@ -10,6 +10,15 @@
   --faction-badge-size-disabled: 22px;
   --faction-grid-py: 0.5rem;
   --faction-grid-px: 0.25rem;
+  /* Chrome borders — light matches production; dark flips with data-theme */
+  --chrome-border: rgba(0, 0, 0, 0.12);
+  /* Default reach-badge grey (picked/banned still use status colors) */
+  --faction-badge-default: rgb(189, 189, 189);
+}
+
+[data-theme="dark"] {
+  --chrome-border: rgba(255, 255, 255, 0.12);
+  --faction-badge-default: rgb(90, 90, 90);
 }
 
 /* Mid-height phones / short laptops: step density down before SE */
@@ -47,7 +56,14 @@
   gap: 0.5rem;
   padding: 0.35rem 0.75rem;
   flex-shrink: 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid var(--chrome-border);
+}
+
+.app-header-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0;
 }
 
 .app-header .MuiToggleButton-root {
@@ -81,7 +97,7 @@
 
 .app-footer {
   flex-shrink: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  border-top: 1px solid var(--chrome-border);
 }
 
 .app-main {

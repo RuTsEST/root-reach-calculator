@@ -74,7 +74,7 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode}) =>
                     height: badgeSize,
                     fontSize: badgeFontSize,
                     lineHeight: 1,
-                    backgroundColor: fabColor || "rgb(189, 189, 189)",
+                    backgroundColor: fabColor || "var(--faction-badge-default)",
                     zIndex: 1,
                     pointerEvents: "none",
                 }}
