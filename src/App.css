@@ -2,6 +2,44 @@
   justify-content: center;
 }
 
+:root {
+  /* Default / tall viewports — full-size fabs in the max-width column */
+  --faction-fab-size: 7em;
+  --faction-fab-size-disabled: 4em;
+  --faction-badge-size: 32px;
+  --faction-badge-size-disabled: 22px;
+  --faction-grid-py: 0.5rem;
+  --faction-grid-px: 0.25rem;
+}
+
+/* Mid-height phones / short laptops: step density down before SE */
+@media (max-height: 820px) {
+  :root {
+    --faction-fab-size: 5.75em;
+    --faction-fab-size-disabled: 3.5em;
+    --faction-badge-size: 28px;
+    --faction-badge-size-disabled: 20px;
+    --faction-grid-py: 0.35rem;
+  }
+}
+
+/* iPhone SE (667) and similar short viewports: fit 5 fab rows without scroll */
+@media (max-height: 700px) {
+  :root {
+    --faction-fab-size: 5.35em;
+    --faction-fab-size-disabled: 3.35em;
+    --faction-badge-size: 26px;
+    --faction-badge-size-disabled: 18px;
+    --faction-grid-py: 0.2rem;
+    --faction-grid-px: 0.1rem;
+  }
+
+  /* Top-align on short viewports so spare height isn't empty bands */
+  .faction-grid-wrap {
+    margin-block: 0;
+  }
+}
+
 .app-header {
   display: flex;
   align-items: center;
@@ -10,6 +48,11 @@
   padding: 0.35rem 0.75rem;
   flex-shrink: 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.app-header .MuiToggleButton-root {
+  padding: 0.35rem 0.75rem;
+  line-height: 1.2;
 }
 
 .reach {
@@ -39,4 +82,70 @@
 .app-footer {
   flex-shrink: 0;
   border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.app-main {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Vertically center the grid when there is spare height; collapses when content is taller */
+.faction-grid-wrap {
+  margin-block: auto;
+  width: 100%;
+}
+
+.faction-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: auto;
+  justify-items: center;
+  align-items: center;
+  flex: 0 0 auto;
+  padding: var(--faction-grid-py) var(--faction-grid-px);
+}
+
+@media (max-height: 700px) {
+  .app-header {
+    padding: 0.15rem 0.5rem;
+    gap: 0.35rem;
+  }
+
+  .app-header .MuiToggleButton-root {
+    padding: 0.15rem 0.55rem;
+    font-size: 0.8rem;
+    min-height: 0;
+  }
+
+  .app-header .MuiIconButton-root {
+    padding: 0.3rem;
+  }
+
+  .reach {
+    font-size: 0.82rem;
+  }
+
+  .reach-status {
+    font-size: 0.68rem;
+  }
+
+  .app-footer .player-count-bar {
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+  }
+}
+
+/* Comfortable density on large / tall viewports (desktop spot-check) */
+@media (min-height: 900px) and (min-width: 600px) {
+  :root {
+    --faction-fab-size: 7em;
+    --faction-fab-size-disabled: 4em;
+    --faction-badge-size: 32px;
+    --faction-badge-size-disabled: 22px;
+    --faction-grid-py: 0.65rem;
+    --faction-grid-px: 0.35rem;
+  }
 }

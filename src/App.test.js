@@ -61,12 +61,18 @@ test('ban mode: can ban a faction grayed out as unavailable', () => {
 
   const alliance = container.querySelector('[data-cy="alliance"]');
   expect(alliance).toBeDisabled();
-  expect(alliance).toHaveStyle({ width: '4em', opacity: '50%' });
+  expect(alliance).toHaveStyle({
+    width: 'var(--faction-fab-size-disabled)',
+    opacity: '50%',
+  });
 
   fireEvent.click(screen.getByRole('button', { name: /^ban$/i }));
   expect(alliance).not.toBeDisabled();
   // Ban mode restores full size/opacity so unavailable fabs look clickable
-  expect(alliance).toHaveStyle({ width: '7em', opacity: '100%' });
+  expect(alliance).toHaveStyle({
+    width: 'var(--faction-fab-size)',
+    opacity: '100%',
+  });
 
   fireEvent.click(alliance);
   expect(alliance).not.toBeDisabled();
