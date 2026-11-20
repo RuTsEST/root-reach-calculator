@@ -3,10 +3,12 @@ import * as React from 'react';
 import {IS_AVAILABLE, IS_BANNED, IS_NOT_AVAILABLE, IS_PICKED} from "../constants";
 import {createInitialFactions} from "../data/factions";
 import {loadSession, saveSession} from "../sessionStorage";
+import {recomputeAvailability} from "../availability";
 import {
     fillDisabledReason,
     pickRandomCompletion,
     statusesToFillArgs,
+    totalReachForNames,
 } from "../randomFill";
 import {ChooseFactionButton} from "./ChooseFactionButton";
 
@@ -37,6 +39,23 @@ function persistFactionStatuses(factions) {
     saveSession({ factionStatuses });
 }
 
+function fillStateFromFactions(factions, playerCount, requiredReach, fillGeneratedNames) {
+    const args = statusesToFillArgs(
+        factions,
+        playerCount,
+        requiredReach,
+        fillGeneratedNames
+    );
+    const reason = fillDisabledReason({
+        ...args,
+        fillGeneratedNames,
+    });
+    return {
+        disabled: Boolean(reason),
+        reason: reason || '',
+    };
+}
+
 export const ChooseFactionButtons = ({
     playerCount,
     setReach,
@@ -52,105 +71,18 @@ export const ChooseFactionButtons = ({
     // already-handled fillRequestId from the parent.
     const lastHandledFillRequest = React.useRef(fillRequestId);
 
-    const setAvailableFactions = React.useCallback((previousFactions) => {
-        const factions = {...previousFactions};
-        const pickedFactions = Object.values(factions).filter((faction) => faction.status === IS_PICKED)
-
-        // If the number of picked factions >= number of players in game then set every not picked and not banned faction as disabled
-        if (pickedFactions.length >= playerCount) {
-
-            for (const key in factions) {
-                if (!(factions[key].status === IS_PICKED || factions[key].status === IS_BANNED)) {
-                    factions[key].status = IS_NOT_AVAILABLE
-                }
-            }
-
-            return factions;
-        }
-
-        // Filter out picked and banned factions
-        let sortedFactionArray = Object.values(factions)
-            .filter((faction) => !(faction.status === IS_PICKED || faction.status === IS_BANNED))
-            .sort((faction1, faction2) => {
-                if (faction1.reach > faction2.reach) {
-                    return -1;
-                }
-                if (faction1.reach < faction2.reach) {
-                    return 1;
-                }
-                return 0;
-            });
-
-        const playersStillToPick = playerCount - pickedFactions.length;
-
-        const reach = Object.values(factions)
-            .filter((faction) => faction.status === IS_PICKED)
-            .map((faction) => faction.reach)
-            .reduce((total, currentFactionReach) => total + currentFactionReach, 0);
-
-        for (const factionsKey in factions) {
-            if (factions[factionsKey].status === IS_PICKED || factions[factionsKey].status === IS_BANNED) {
-                continue;
-            }
-
-            if (factions[factionsKey].name === "vagabond2" && (factions.vagabond1.status !== IS_PICKED)){
-                factions[factionsKey].status = IS_NOT_AVAILABLE;
-                continue
-            }
-
-            // Knaves of the Deepwood use Vagabond components and cannot be played with any Vagabond
-            if (factions[factionsKey].name === "knaves" && (factions.vagabond1.status === IS_PICKED || factions.vagabond2.status === IS_PICKED)) {
-                factions[factionsKey].status = IS_NOT_AVAILABLE;
-                continue
-            }
-            if ((factions[factionsKey].name === "vagabond1" || factions[factionsKey].name === "vagabond2") && factions.knaves.status === IS_PICKED) {
-                factions[factionsKey].status = IS_NOT_AVAILABLE;
-                continue
-            }
-
-            let sortedFactionArrayWithoutFaction = sortedFactionArray.filter((faction) => faction.name !== factionsKey)
-            let maxReachForFaction = factions[factionsKey].reach;
-            for (let i = 0; i < playersStillToPick - 1; i++) {
-                if (sortedFactionArrayWithoutFaction[i]) {
-                    maxReachForFaction += sortedFactionArrayWithoutFaction[i].reach
-                }
-            }
-
-            if (reach + maxReachForFaction < requiredReach) {
-                factions[factionsKey].status = IS_NOT_AVAILABLE
-            } else {
-                factions[factionsKey].status = IS_AVAILABLE
-            }
-        }
-
-        return factions;
+    React.useEffect(() => {
+        setFactions((prev) =>
+            recomputeAvailability(prev, { playerCount, requiredReach })
+        );
     }, [playerCount, requiredReach]);
 
     React.useEffect(() => {
-        setFactions(prev => setAvailableFactions(prev));
-    }, [setAvailableFactions]);
-
-    const reportFillState = React.useCallback((nextFactions, nextFillGenerated) => {
         if (!onFillStateChange) return;
-        const args = statusesToFillArgs(
-            nextFactions,
-            playerCount,
-            requiredReach,
-            nextFillGenerated
+        onFillStateChange(
+            fillStateFromFactions(factions, playerCount, requiredReach, fillGeneratedNames)
         );
-        const reason = fillDisabledReason({
-            ...args,
-            fillGeneratedNames: nextFillGenerated,
-        });
-        onFillStateChange({
-            disabled: Boolean(reason),
-            reason: reason || '',
-        });
-    }, [onFillStateChange, playerCount, requiredReach]);
-
-    React.useEffect(() => {
-        reportFillState(factions, fillGeneratedNames);
-    }, [factions, fillGeneratedNames, reportFillState]);
+    }, [factions, fillGeneratedNames, onFillStateChange, playerCount, requiredReach]);
 
     const handleFactionClick = (factionName) => {
         let newFactions = {...factions};
@@ -165,7 +97,7 @@ export const ChooseFactionButtons = ({
         // Manual edits: drop this name from the last fill set (it is now user-controlled).
         const nextFillGenerated = fillGeneratedNames.filter((name) => name !== factionName);
 
-        newFactions = setAvailableFactions(newFactions);
+        newFactions = recomputeAvailability(newFactions, { playerCount, requiredReach });
         setFactions(newFactions);
         setFillGeneratedNames(nextFillGenerated);
         persistFactionStatuses(newFactions);
@@ -187,7 +119,16 @@ export const ChooseFactionButtons = ({
             excludeFillNames: fillGeneratedNames,
         });
         if (!result.ok) {
-            reportFillState(factions, fillGeneratedNames);
+            if (onFillStateChange) {
+                onFillStateChange(
+                    fillStateFromFactions(
+                        factions,
+                        playerCount,
+                        requiredReach,
+                        fillGeneratedNames
+                    )
+                );
+            }
             return;
         }
 
@@ -204,7 +145,7 @@ export const ChooseFactionButtons = ({
             }
         }
 
-        newFactions = setAvailableFactions(newFactions);
+        newFactions = recomputeAvailability(newFactions, { playerCount, requiredReach });
         setFactions(newFactions);
         setFillGeneratedNames(result.fillNames);
         persistFactionStatuses(newFactions);
@@ -214,23 +155,17 @@ export const ChooseFactionButtons = ({
         fillGeneratedNames,
         playerCount,
         requiredReach,
-        setAvailableFactions,
-        reportFillState,
+        onFillStateChange,
     ]);
 
     React.useEffect(() => {
-        const reach = Object.values(factions)
-            .filter((faction) => faction.status === IS_PICKED)
-            .map((faction) => faction.reach)
-            .reduce((total, currentFactionReach) => total + currentFactionReach, 0);
-
-        setReach(reach);
+        const pickedNames = Object.keys(factions).filter(
+            (name) => factions[name].status === IS_PICKED
+        );
+        setReach(totalReachForNames(pickedNames));
     }, [setReach, factions])
 
-    const fillGeneratedSet = React.useMemo(
-        () => new Set(fillGeneratedNames),
-        [fillGeneratedNames]
-    );
+    const fillGeneratedSet = new Set(fillGeneratedNames);
 
     const factionArray = Object.values(factions);
     const lastRowCount = factionArray.length % 3;
