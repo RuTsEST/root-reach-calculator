@@ -503,6 +503,24 @@ test('reset after random fill clears to empty starting board', () => {
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
   expect(indicator).toHaveTextContent('Reach: 0 / 21+');
   expect(indicator).toHaveTextContent('Below target');
+  // Reset must not re-fire a prior fill (no remount/id protocol).
+  expect(container.querySelectorAll('[data-cy="pick-fill"]')).toHaveLength(0);
+  expect(container.querySelectorAll('[data-cy="pick-locked"]')).toHaveLength(0);
+});
+
+test('reset then fill works again without leftover picks', () => {
+  const { container } = render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: /fill random factions/i }));
+  expect(countPicked(container)).toBe(4);
+
+  fireEvent.click(screen.getByRole('button', { name: /reset/i }));
+  expect(countPicked(container)).toBe(0);
+
+  const fillBtn = screen.getByRole('button', { name: /fill random factions/i });
+  expect(fillBtn).not.toBeDisabled();
+  fireEvent.click(fillBtn);
+  expect(countPicked(container)).toBe(4);
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Viable');
 });
 
 test('human picks use solid check; fill picks use outline check', () => {

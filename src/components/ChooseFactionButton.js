@@ -13,7 +13,7 @@ const getFactionButtonColor = (faction) => {
     }
 }
 
-export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode, lockedPick = false}) => {
+export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode, isLockedPick = false}) => {
     // Shrink/gray only when pick mode disables the fab. In ban mode, keep full size
     // so "unavailable" factions still read as clickable ban targets.
     // Sizes come from CSS variables (see App.css) so short viewports can densify.
@@ -21,7 +21,7 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode, loc
     // fabs do not collapse row height or shift neighboring rows.
     const isPickDisabled = !isBanMode && faction.status === IS_NOT_AVAILABLE;
     const isPicked = faction.status === IS_PICKED;
-    const ariaLabel = isPicked && lockedPick
+    const ariaLabel = isPicked && isLockedPick
         ? `${faction.label} (locked)`
         : faction.label;
     const widthAndHeight = isPickDisabled
@@ -63,7 +63,7 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode, loc
                     >
                         <FactionStatusOverlay
                             status={faction.status}
-                            locked={isPicked && lockedPick}
+                            isLockedPick={isPicked && isLockedPick}
                         />
                         <Avatar
                             alt=""

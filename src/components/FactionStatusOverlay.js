@@ -4,39 +4,44 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import NotInterestedOutlinedIcon from "@mui/icons-material/NotInterestedOutlined";
 import * as React from "react";
 
-export const FactionStatusOverlay = ({status, locked = false}) => {
-    let sx = {
-        position: "absolute",
-        zIndex: "1",
-        width: "85%",
-        height: "85%"
-    }
+const overlaySx = {
+    position: "absolute",
+    zIndex: "1",
+    width: "85%",
+    height: "85%",
+};
 
+/** Solid check: human/locked pick kept across random-fill re-rolls. */
+export const LockedPickOverlay = () => (
+    <CheckCircleIcon
+        color="success"
+        data-cy="pick-locked"
+        // Solid fill covers art more than the outline; keep it readable but see-through.
+        sx={{ ...overlaySx, opacity: 0.85 }}
+    />
+);
+
+/** Outline check: pick produced by the last random fill (cleared on re-roll). */
+export const FillPickOverlay = () => (
+    <CheckCircleOutlineIcon
+        color="success"
+        data-cy="pick-fill"
+        sx={overlaySx}
+    />
+);
+
+export const FactionStatusOverlay = ({status, isLockedPick = false}) => {
     switch (status) {
         case IS_PICKED:
-            // Solid = human/locked pick (kept on re-roll); outline = random-fill pick.
-            return locked ? (
-                <CheckCircleIcon
-                    color="success"
-                    data-cy="pick-locked"
-                    // Solid fill covers art more than the outline; keep it readable but see-through.
-                    sx={{ ...sx, opacity: 0.85 }}
-                />
-            ) : (
-                <CheckCircleOutlineIcon
-                    color="success"
-                    data-cy="pick-fill"
-                    sx={sx}
-                />
-            )
+            return isLockedPick ? <LockedPickOverlay /> : <FillPickOverlay />;
         case IS_BANNED:
             return (
                 <NotInterestedOutlinedIcon
                     color="error"
-                    sx={sx}
+                    sx={overlaySx}
                 />
-            )
+            );
         default:
-            return (<></>)
+            return (<></>);
     }
-}
+};
