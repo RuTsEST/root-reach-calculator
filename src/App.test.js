@@ -92,6 +92,8 @@ test('ban mode: can ban a faction grayed out as unavailable', () => {
     width: 'var(--faction-fab-size-disabled)',
     opacity: '50%',
   });
+  // Slot still reserves full fab geometry so disabled shrink does not collapse rows.
+  expect(alliance.closest('.faction-fab-slot')).toBeTruthy();
 
   fireEvent.click(screen.getByRole('button', { name: /^ban$/i }));
   expect(alliance).not.toBeDisabled();
