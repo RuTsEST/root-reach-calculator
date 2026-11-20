@@ -38,56 +38,72 @@ export const ChooseFactionButton = ({faction, handleFactionClick, isBanMode, loc
 
     // Reach Avatar at ~2 o'clock, slightly outside the rim so the Fab edge
     // cuts the number ~half-in/half-out. Margin keeps the overhang in layout.
+    // Short catalog label sits under the fab (always on; densify via CSS vars).
     return (
-        <Box sx={{
-            position: "relative",
-            display: "inline-flex",
-            flexShrink: 0,
-            m: badgeOverhang,
-        }}>
-            <Fab onClick={() => handleFactionClick(faction.name)}
-                 value={faction.reach}
-                 aria-label={ariaLabel}
-                 sx={{
-                     width: widthAndHeight,
-                     height: widthAndHeight,
-                     opacity: opacity,
-                     zIndex: 0,
-                 }}
-                 disabled={isPickDisabled}
-                 data-cy={faction.name}
-            >
-                <FactionStatusOverlay
-                    status={faction.status}
-                    locked={isPicked && lockedPick}
-                />
+        <Box
+            className={isPickDisabled ? "faction-cell faction-cell--disabled" : "faction-cell"}
+            sx={{
+                display: "inline-flex",
+                flexDirection: "column",
+                alignItems: "center",
+                flexShrink: 0,
+                maxWidth: "100%",
+            }}
+        >
+            <Box sx={{
+                position: "relative",
+                display: "inline-flex",
+                flexShrink: 0,
+                m: badgeOverhang,
+                mb: `calc(${badgeOverhang} * 0.35)`,
+            }}>
+                <Fab onClick={() => handleFactionClick(faction.name)}
+                     value={faction.reach}
+                     aria-label={ariaLabel}
+                     sx={{
+                         width: widthAndHeight,
+                         height: widthAndHeight,
+                         opacity: opacity,
+                         zIndex: 0,
+                     }}
+                     disabled={isPickDisabled}
+                     data-cy={faction.name}
+                >
+                    <FactionStatusOverlay
+                        status={faction.status}
+                        locked={isPicked && lockedPick}
+                    />
+                    <Avatar
+                        alt=""
+                        sx={{width: "90%", height: "90%"}}
+                        imgProps={{sx: {objectFit: "contain"}}}
+                        src={faction.image}
+                    />
+                </Fab>
                 <Avatar
-                    alt={faction.label}
-                    sx={{width: "90%", height: "90%"}}
-                    imgProps={{sx: {objectFit: "contain"}}}
-                    src={faction.image}
-                />
-            </Fab>
-            <Avatar
-                aria-hidden
-                sx={{
-                    position: "absolute",
-                    // Just outside the NE circumference so the curved Fab edge
-                    // reads as cutting the badge roughly in half.
-                    top: "12%",
-                    right: "12%",
-                    transform: "translate(50%, -50%)",
-                    width: badgeSize,
-                    height: badgeSize,
-                    fontSize: badgeFontSize,
-                    lineHeight: 1,
-                    backgroundColor: fabColor || "var(--faction-badge-default)",
-                    zIndex: 1,
-                    pointerEvents: "none",
-                }}
-            >
-                {faction.reach}
-            </Avatar>
+                    aria-hidden
+                    sx={{
+                        position: "absolute",
+                        // Just outside the NE circumference so the curved Fab edge
+                        // reads as cutting the badge roughly in half.
+                        top: "12%",
+                        right: "12%",
+                        transform: "translate(50%, -50%)",
+                        width: badgeSize,
+                        height: badgeSize,
+                        fontSize: badgeFontSize,
+                        lineHeight: 1,
+                        backgroundColor: fabColor || "var(--faction-badge-default)",
+                        zIndex: 1,
+                        pointerEvents: "none",
+                    }}
+                >
+                    {faction.reach}
+                </Avatar>
+            </Box>
+            <span className="faction-label" aria-hidden="true">
+                {faction.label}
+            </span>
         </Box>
     )
 }

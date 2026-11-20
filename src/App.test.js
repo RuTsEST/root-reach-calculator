@@ -159,6 +159,21 @@ test('faction buttons expose accessible names', () => {
   expect(screen.getByRole('button', { name: 'Duchy' })).toBeInTheDocument();
 });
 
+test('faction cells show always-on short catalog labels', () => {
+  const { container } = render(<App />);
+  const labels = Array.from(container.querySelectorAll('.faction-label')).map(
+    (el) => el.textContent
+  );
+  expect(labels).toEqual(expect.arrayContaining([
+    'Marquise', 'Eyrie', 'Alliance', 'Vagabond', 'Riverfolk', 'Cult',
+    'Corvid', 'Duchy', 'Vagabond 2', 'Hundreds', 'Keepers', 'Lilypad',
+    'Twilight', 'Knaves',
+  ]));
+  expect(labels).toHaveLength(14);
+  // Visible labels are decorative; a11y name stays on the fab
+  expect(container.querySelector('.faction-label')).toHaveAttribute('aria-hidden', 'true');
+});
+
 test('reach indicator has aria-live for status changes', () => {
   const { container } = render(<App />);
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
