@@ -202,6 +202,18 @@ test('footer feedback link opens Discussions Ideas in a new tab', () => {
   expect(screen.getByRole('link', { name: /leave feedback on github/i })).toBe(link);
 });
 
+test('theme toggle lives in the footer config group next to feedback', () => {
+  const { container } = render(<App />);
+  const config = container.querySelector('.app-footer-config');
+  const themeToggle = container.querySelector('[data-cy="theme-toggle"]');
+  const feedback = container.querySelector('[data-cy="feedback-link"]');
+  expect(config).toBeInTheDocument();
+  expect(config).toContainElement(themeToggle);
+  expect(config).toContainElement(feedback);
+  expect(container.querySelector('.app-header [data-cy="theme-toggle"]')).not.toBeInTheDocument();
+  expect(container.querySelector('.app-header [data-cy="random-fill"]')).toBeInTheDocument();
+});
+
 test('vagabond2 stays unavailable until vagabond1 is picked', () => {
   const { container } = render(<App />);
   const vagabond2 = container.querySelector('[data-cy="vagabond2"]');
