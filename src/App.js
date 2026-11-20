@@ -37,7 +37,7 @@ import {
 const ReachIndicator = ({ reach, requiredReach }) => {
     const [helpOpen, setHelpOpen] = React.useState(false);
     const isMet = reach >= requiredReach;
-    const statusCue = isMet ? 'OK' : 'Below target';
+    const statusCue = isMet ? 'Viable' : 'Below target';
     return (
         <>
             <h3
@@ -236,7 +236,7 @@ function App() {
                         >
                             <CasinoIcon fontSize="small" />
                         </IconButton>
-                        <IconButton onClick={handleReset} size="small" aria-label="reset">
+                        <IconButton onClick={handleReset} size="small" aria-label="Reset">
                             <RefreshIcon fontSize="small" />
                         </IconButton>
                     </Box>
