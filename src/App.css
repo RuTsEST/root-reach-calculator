@@ -164,6 +164,21 @@
   pointer-events: none;
 }
 
+/* Fixed slot: disabled fabs may shrink visually but never change row geometry. */
+.faction-fab-slot {
+  box-sizing: content-box;
+  width: var(--faction-fab-size);
+  height: var(--faction-fab-size);
+  /* Always reserve full badge overhang (half outside the rim). */
+  margin: calc(var(--faction-badge-size) / 2);
+  /* Tighten gap above the always-on catalog label. */
+  margin-bottom: calc(var(--faction-badge-size) / 2 * 0.35);
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (max-height: 700px) {
   .app-header {
     padding: 0.15rem 0.5rem;
