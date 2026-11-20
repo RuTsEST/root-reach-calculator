@@ -3,13 +3,16 @@
 }
 
 :root {
-  /* Default / tall viewports — full-size fabs in the max-width column */
-  --faction-fab-size: 7em;
-  --faction-fab-size-disabled: 4em;
-  --faction-badge-size: 32px;
-  --faction-badge-size-disabled: 22px;
-  --faction-grid-py: 0.5rem;
-  --faction-grid-px: 0.25rem;
+  /* Default / tall viewports — room for always-on short names under fabs */
+  --faction-fab-size: 6.5em;
+  --faction-fab-size-disabled: 3.75em;
+  --faction-badge-size: 30px;
+  --faction-badge-size-disabled: 20px;
+  --faction-grid-py: 0.35rem;
+  --faction-grid-px: 0.2rem;
+  /* Always-on short catalog label under each fab (P2.3) */
+  --faction-label-size: 0.72rem;
+  --faction-label-lh: 1.1;
   /* Chrome borders — light matches production; dark flips with data-theme */
   --chrome-border: rgba(0, 0, 0, 0.12);
   /* Default reach-badge grey (picked/banned still use status colors) */
@@ -24,23 +27,25 @@
 /* Mid-height phones / short laptops: step density down before SE */
 @media (max-height: 820px) {
   :root {
-    --faction-fab-size: 5.75em;
-    --faction-fab-size-disabled: 3.5em;
-    --faction-badge-size: 28px;
-    --faction-badge-size-disabled: 20px;
-    --faction-grid-py: 0.35rem;
+    --faction-fab-size: 5.1em;
+    --faction-fab-size-disabled: 3.15em;
+    --faction-badge-size: 26px;
+    --faction-badge-size-disabled: 18px;
+    --faction-grid-py: 0.25rem;
+    --faction-label-size: 0.65rem;
   }
 }
 
-/* iPhone SE (667) and similar short viewports: fit 5 fab rows without scroll */
+/* iPhone SE (667) and similar short viewports: fit 5 fab+label rows without scroll */
 @media (max-height: 700px) {
   :root {
-    --faction-fab-size: 5.35em;
-    --faction-fab-size-disabled: 3.35em;
-    --faction-badge-size: 26px;
-    --faction-badge-size-disabled: 18px;
-    --faction-grid-py: 0.2rem;
-    --faction-grid-px: 0.1rem;
+    --faction-fab-size: 4.35em;
+    --faction-fab-size-disabled: 2.85em;
+    --faction-badge-size: 22px;
+    --faction-badge-size-disabled: 16px;
+    --faction-grid-py: 0.1rem;
+    --faction-grid-px: 0.05rem;
+    --faction-label-size: 0.58rem;
   }
 
   /* Top-align on short viewports so spare height isn't empty bands */
@@ -124,6 +129,31 @@
   padding: var(--faction-grid-py) var(--faction-grid-px);
 }
 
+.faction-cell {
+  min-width: 0;
+}
+
+.faction-cell--disabled .faction-label {
+  opacity: 0.5;
+}
+
+.faction-label {
+  display: block;
+  max-width: 100%;
+  padding: 0 0.1rem 0.05rem;
+  font-size: var(--faction-label-size);
+  font-weight: 600;
+  line-height: var(--faction-label-lh);
+  letter-spacing: 0.01em;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: inherit;
+  user-select: none;
+  pointer-events: none;
+}
+
 @media (max-height: 700px) {
   .app-header {
     padding: 0.15rem 0.5rem;
@@ -157,11 +187,12 @@
 /* Comfortable density on large / tall viewports (desktop spot-check) */
 @media (min-height: 900px) and (min-width: 600px) {
   :root {
-    --faction-fab-size: 7em;
-    --faction-fab-size-disabled: 4em;
+    --faction-fab-size: 6.75em;
+    --faction-fab-size-disabled: 3.9em;
     --faction-badge-size: 32px;
     --faction-badge-size-disabled: 22px;
-    --faction-grid-py: 0.65rem;
-    --faction-grid-px: 0.35rem;
+    --faction-grid-py: 0.5rem;
+    --faction-grid-px: 0.3rem;
+    --faction-label-size: 0.78rem;
   }
 }
