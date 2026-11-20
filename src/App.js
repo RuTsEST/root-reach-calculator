@@ -122,7 +122,7 @@ function selectionFromSession(session) {
 }
 
 function App() {
-    const initial = React.useMemo(() => selectionFromSession(loadSession()), []);
+    const [initial] = React.useState(() => selectionFromSession(loadSession()));
 
     const [reach, setReach] = React.useState(0);
     const [requiredReach, setRequiredReach] = React.useState(initial.requiredReach);
@@ -156,13 +156,13 @@ function App() {
         document.documentElement.style.colorScheme = mode;
     }, [mode, themePreference]);
 
-    const handleThemeToggle = React.useCallback(() => {
+    const handleThemeToggle = () => {
         const next = nextThemePreference(themePreference);
         setThemePreference(next);
         saveThemePreference(next);
-    }, [themePreference]);
+    };
 
-    const onPlayerCountChange = React.useCallback((newKey) => {
+    const onPlayerCountChange = (newKey) => {
         if (newKey == null) return;
         const values = REACH_THRESHOLDS[newKey];
         if (!values) return;
@@ -170,14 +170,14 @@ function App() {
         setRequiredReach(values.requiredReach);
         setPlayerCount(values.playerCount);
         saveSession({ playerCountKey: newKey });
-    }, []);
+    };
 
-    const handleBanModeChange = React.useCallback((_, v) => {
+    const handleBanModeChange = (_, v) => {
         if (v === null) return;
         const next = v === 'ban';
         setIsBanMode(next);
         saveSession({ isBanMode: next });
-    }, []);
+    };
 
     const handleReset = () => {
         // Clear picks/bans from session; keep mode and player selection.

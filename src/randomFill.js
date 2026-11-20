@@ -1,10 +1,7 @@
 import { FACTION_CATALOG } from './data/factions';
 import { IS_BANNED, IS_PICKED } from './constants';
 
-/**
- * Special-rules + reach checks for a complete picked set (names).
- * Mirrors ChooseFactionButtons constraints for vagabond2 / knaves.
- */
+/** Special-rules check for a complete picked set (vagabond2 / knaves). */
 export function isLegalPickSet(pickedNames) {
     const set = new Set(pickedNames);
     if (set.has('vagabond2') && !set.has('vagabond1')) {
