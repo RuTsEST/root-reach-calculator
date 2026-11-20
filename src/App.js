@@ -3,6 +3,7 @@ import * as React from "react";
 import { Box, CssBaseline, IconButton, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import CasinoIcon from "@mui/icons-material/Casino";
 import { PlayerCountButtons } from "./components/PlayerCountButtons";
 import { ChooseFactionButtons } from "./components/ChooseFactionButtons";
 import { ThemeToggleButton } from "./components/ThemeToggleButton";
@@ -55,6 +56,8 @@ function App() {
     const [selectedValue, setSelectedValue] = React.useState(initial.selectedValue);
     const [isBanMode, setIsBanMode] = React.useState(initial.isBanMode);
     const [resetKey, setResetKey] = React.useState(0);
+    const [fillRequestId, setFillRequestId] = React.useState(0);
+    const [fillState, setFillState] = React.useState({ disabled: false, reason: '' });
 
     const [themePreference, setThemePreference] = React.useState(() => loadThemePreference());
     const [systemPrefersDark, setSystemPrefersDark] = React.useState(() => getSystemPrefersDark());
@@ -106,9 +109,22 @@ function App() {
 
     const handleReset = () => {
         // Clear picks/bans from session; keep mode and player/bot selection.
+        // Also clear fillRequestId so remounting the grid does not re-run the
+        // last random-fill request (refs reset on remount).
         saveSession({ factionStatuses: {} });
+        setFillRequestId(0);
         setResetKey(k => k + 1);
+        setFillState({ disabled: false, reason: '' });
     };
+
+    const handleRandomFill = () => {
+        if (fillState.disabled) return;
+        setFillRequestId((id) => id + 1);
+    };
+
+    const fillTitle = fillState.disabled
+        ? (fillState.reason || 'No valid faction spread for this table')
+        : 'Fill random factions';
 
     return (
         <ThemeProvider theme={theme}>
@@ -138,8 +154,18 @@ function App() {
                     <ReachIndicator reach={reach} requiredReach={requiredReach} />
                     <Box className="app-header-actions">
                         <ThemeToggleButton preference={themePreference} onToggle={handleThemeToggle} />
+                        <IconButton
+                            onClick={handleRandomFill}
+                            size="small"
+                            aria-label="Fill random factions"
+                            title={fillTitle}
+                            disabled={fillState.disabled}
+                            data-cy="random-fill"
+                        >
+                            <CasinoIcon fontSize="small" />
+                        </IconButton>
                         <IconButton onClick={handleReset} size="small" aria-label="reset">
-                            <RefreshIcon />
+                            <RefreshIcon fontSize="small" />
                         </IconButton>
                     </Box>
                 </Box>
@@ -151,6 +177,8 @@ function App() {
                             setReach={setReach}
                             requiredReach={requiredReach}
                             isBanMode={isBanMode}
+                            fillRequestId={fillRequestId}
+                            onFillStateChange={setFillState}
                         />
                     </Box>
                 </Box>
