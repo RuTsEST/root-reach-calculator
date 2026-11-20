@@ -108,7 +108,7 @@ function App() {
     }, []);
 
     const handleReset = () => {
-        // Clear picks/bans from session; keep mode and player/bot selection.
+        // Clear picks/bans from session; keep mode and player selection.
         // Also clear fillRequestId so remounting the grid does not re-run the
         // last random-fill request (refs reset on remount).
         saveSession({ factionStatuses: {} });
