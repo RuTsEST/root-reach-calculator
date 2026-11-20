@@ -1,9 +1,10 @@
 import {IS_BANNED, IS_PICKED} from "../constants";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import NotInterestedOutlinedIcon from "@mui/icons-material/NotInterestedOutlined";
 import * as React from "react";
 
-export const FactionStatusOverlay = ({status}) => {
+export const FactionStatusOverlay = ({status, locked = false}) => {
     let sx = {
         position: "absolute",
         zIndex: "1",
@@ -13,9 +14,17 @@ export const FactionStatusOverlay = ({status}) => {
 
     switch (status) {
         case IS_PICKED:
-            return (
+            // Solid = human/locked pick (kept on re-roll); outline = random-fill pick.
+            return locked ? (
+                <CheckCircleIcon
+                    color="success"
+                    data-cy="pick-locked"
+                    sx={sx}
+                />
+            ) : (
                 <CheckCircleOutlineIcon
                     color="success"
+                    data-cy="pick-fill"
                     sx={sx}
                 />
             )

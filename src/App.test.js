@@ -323,13 +323,23 @@ test('stored theme preference survives remount within the session', () => {
   expect(window.sessionStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
 });
 
+function isPickedFab(el) {
+  return Boolean(
+    el.querySelector('[data-testid="CheckCircleOutlineIcon"]')
+    || el.querySelector('[data-testid="CheckCircleIcon"]')
+    || el.querySelector('[data-cy="pick-fill"]')
+    || el.querySelector('[data-cy="pick-locked"]')
+  );
+}
+
 function countPicked(container) {
   return Array.from(container.querySelectorAll('[data-cy]')).filter((el) => {
     const cy = el.getAttribute('data-cy');
     if (!cy || cy === 'reach-indicator' || cy === 'theme-toggle' || cy === 'random-fill') {
       return false;
     }
-    return Boolean(el.querySelector('[data-testid="CheckCircleOutlineIcon"]'));
+    if (cy === 'pick-fill' || cy === 'pick-locked') return false;
+    return isPickedFab(el);
   }).length;
 }
 
@@ -340,7 +350,8 @@ function pickedFactionNames(container) {
       if (!cy || cy === 'reach-indicator' || cy === 'theme-toggle' || cy === 'random-fill') {
         return false;
       }
-      return Boolean(el.querySelector('[data-testid="CheckCircleOutlineIcon"]'));
+      if (cy === 'pick-fill' || cy === 'pick-locked') return false;
+      return isPickedFab(el);
     })
     .map((el) => el.getAttribute('data-cy'));
 }
@@ -419,4 +430,18 @@ test('reset after random fill clears to empty starting board', () => {
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
   expect(indicator).toHaveTextContent('Reach: 0 / 21+');
   expect(indicator).toHaveTextContent('Below target');
+});
+
+test('human picks use solid check; fill picks use outline check', () => {
+  const { container } = render(<App />);
+  fireEvent.click(container.querySelector('[data-cy="marquise"]'));
+  expect(container.querySelector('[data-cy="marquise"] [data-cy="pick-locked"]')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Marquise (locked)' })).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: /fill random factions/i }));
+
+  expect(container.querySelector('[data-cy="marquise"] [data-cy="pick-locked"]')).toBeInTheDocument();
+  expect(container.querySelectorAll('[data-cy="pick-fill"]').length).toBe(3);
+  expect(container.querySelectorAll('[data-cy="pick-locked"]').length).toBe(1);
+  expect(countPicked(container)).toBe(4);
 });
