@@ -225,6 +225,11 @@ export const ChooseFactionButtons = ({
         setReach(reach);
     }, [setReach, factions])
 
+    const fillGeneratedSet = React.useMemo(
+        () => new Set(fillGeneratedNames),
+        [fillGeneratedNames]
+    );
+
     const factionArray = Object.values(factions);
     const lastRowCount = factionArray.length % 3;
     const lastRowStart = lastRowCount > 0 ? factionArray.length - lastRowCount : factionArray.length;
@@ -235,6 +240,9 @@ export const ChooseFactionButtons = ({
                 const isLastRow = lastRowCount > 0 && index >= lastRowStart;
                 const posInLastRow = isLastRow ? index - lastRowStart : 0;
                 const gridColumn = isLastRow ? `${posInLastRow * 2 + 2} / span 2` : 'span 2';
+                // Human picks (not from the last fill) stay locked across re-rolls.
+                const lockedPick =
+                    faction.status === IS_PICKED && !fillGeneratedSet.has(faction.name);
 
                 return (
                     <Box key={index} sx={{ display: "flex", justifyContent: "center", alignItems: "center", gridColumn }}>
@@ -242,6 +250,7 @@ export const ChooseFactionButtons = ({
                             handleFactionClick={handleFactionClick}
                             faction={faction}
                             isBanMode={isBanMode}
+                            lockedPick={lockedPick}
                         />
                     </Box>
                 );

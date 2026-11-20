@@ -147,9 +147,10 @@ function App() {
                         exclusive
                         value={isBanMode ? 'ban' : 'pick'}
                         onChange={handleBanModeChange}
+                        aria-label="Selection mode"
                     >
-                        <ToggleButton value='ban'>Ban</ToggleButton>
                         <ToggleButton value='pick'>Pick</ToggleButton>
+                        <ToggleButton value='ban'>Ban</ToggleButton>
                     </ToggleButtonGroup>
                     <ReachIndicator reach={reach} requiredReach={requiredReach} />
                     <Box className="app-header-actions">
