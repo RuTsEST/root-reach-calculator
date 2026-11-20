@@ -20,7 +20,7 @@ export const FactionStatusOverlay = ({status, locked = false}) => {
                     color="success"
                     data-cy="pick-locked"
                     // Solid fill covers art more than the outline; keep it readable but see-through.
-                    sx={{ ...sx, opacity: 0.72 }}
+                    sx={{ ...sx, opacity: 0.85 }}
                 />
             ) : (
                 <CheckCircleOutlineIcon
