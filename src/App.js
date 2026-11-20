@@ -129,9 +129,8 @@ function App() {
     const [playerCount, setPlayerCount] = React.useState(initial.playerCount);
     const [playerCountKey, setPlayerCountKey] = React.useState(initial.playerCountKey);
     const [isBanMode, setIsBanMode] = React.useState(initial.isBanMode);
-    const [resetKey, setResetKey] = React.useState(0);
-    const [fillRequestId, setFillRequestId] = React.useState(0);
     const [fillState, setFillState] = React.useState({ disabled: false, reason: '' });
+    const factionGridActionsRef = React.useRef(null);
 
     const [themePreference, setThemePreference] = React.useState(() => loadThemePreference());
     const [systemPrefersDark, setSystemPrefersDark] = React.useState(() => getSystemPrefersDark());
@@ -181,17 +180,15 @@ function App() {
 
     const handleReset = () => {
         // Clear picks/bans from session; keep mode and player selection.
-        // Also clear fillRequestId so remounting the grid does not re-run the
-        // last random-fill request (refs reset on remount).
+        // Grid owns local state — call reset directly (no remount / fill id).
         saveSession({ factionStatuses: {} });
-        setFillRequestId(0);
-        setResetKey(k => k + 1);
+        factionGridActionsRef.current?.reset();
         setFillState({ disabled: false, reason: '' });
     };
 
     const handleRandomFill = () => {
         if (fillState.disabled) return;
-        setFillRequestId((id) => id + 1);
+        factionGridActionsRef.current?.fill();
     };
 
     const fillTitle = fillState.disabled
@@ -244,12 +241,11 @@ function App() {
                 <Box className="app-main">
                     <Box className="faction-grid-wrap">
                         <ChooseFactionButtons
-                            key={resetKey}
                             playerCount={playerCount}
                             setReach={setReach}
                             requiredReach={requiredReach}
                             isBanMode={isBanMode}
-                            fillRequestId={fillRequestId}
+                            actionsRef={factionGridActionsRef}
                             onFillStateChange={setFillState}
                         />
                     </Box>

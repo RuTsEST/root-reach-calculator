@@ -61,15 +61,17 @@ export const ChooseFactionButtons = ({
     setReach,
     requiredReach,
     isBanMode,
-    fillRequestId = 0,
+    actionsRef,
     onFillStateChange,
 }) => {
     const [factions, setFactions] = React.useState(() => factionsFromSession());
     // Picks created by the last Fill; re-roll clears only these and keeps manual picks.
     const [fillGeneratedNames, setFillGeneratedNames] = React.useState([]);
-    // Seed with the current id so a remount (e.g. reset) does not re-apply an
-    // already-handled fillRequestId from the parent.
-    const lastHandledFillRequest = React.useRef(fillRequestId);
+
+    const factionsRef = React.useRef(factions);
+    const fillGeneratedNamesRef = React.useRef(fillGeneratedNames);
+    factionsRef.current = factions;
+    fillGeneratedNamesRef.current = fillGeneratedNames;
 
     React.useEffect(() => {
         setFactions((prev) =>
@@ -103,38 +105,35 @@ export const ChooseFactionButtons = ({
         persistFactionStatuses(newFactions);
     }
 
-    React.useEffect(() => {
-        if (!fillRequestId || fillRequestId === lastHandledFillRequest.current) {
-            return;
-        }
-        lastHandledFillRequest.current = fillRequestId;
-
+    const runFill = React.useCallback(() => {
+        const currentFactions = factionsRef.current;
+        const currentFillGenerated = fillGeneratedNamesRef.current;
         const args = statusesToFillArgs(
-            factions,
+            currentFactions,
             playerCount,
             requiredReach,
-            fillGeneratedNames
+            currentFillGenerated
         );
         const result = pickRandomCompletion(args, Math.random, {
-            excludeFillNames: fillGeneratedNames,
+            excludeFillNames: currentFillGenerated,
         });
         if (!result.ok) {
             if (onFillStateChange) {
                 onFillStateChange(
                     fillStateFromFactions(
-                        factions,
+                        currentFactions,
                         playerCount,
                         requiredReach,
-                        fillGeneratedNames
+                        currentFillGenerated
                     )
                 );
             }
             return;
         }
 
-        let newFactions = { ...factions };
+        let newFactions = { ...currentFactions };
         // Clear previous fill-generated picks so re-roll only reshuffles unlocked seats.
-        for (const name of fillGeneratedNames) {
+        for (const name of currentFillGenerated) {
             if (newFactions[name] && newFactions[name].status === IS_PICKED) {
                 newFactions[name] = { ...newFactions[name], status: IS_AVAILABLE };
             }
@@ -149,14 +148,22 @@ export const ChooseFactionButtons = ({
         setFactions(newFactions);
         setFillGeneratedNames(result.fillNames);
         persistFactionStatuses(newFactions);
-    }, [
-        fillRequestId,
-        factions,
-        fillGeneratedNames,
-        playerCount,
-        requiredReach,
-        onFillStateChange,
-    ]);
+    }, [playerCount, requiredReach, onFillStateChange]);
+
+    const runReset = React.useCallback(() => {
+        const cleared = recomputeAvailability(createInitialFactions(), {
+            playerCount,
+            requiredReach,
+        });
+        setFactions(cleared);
+        setFillGeneratedNames([]);
+        persistFactionStatuses(cleared);
+    }, [playerCount, requiredReach]);
+
+    React.useImperativeHandle(actionsRef, () => ({
+        fill: runFill,
+        reset: runReset,
+    }), [runFill, runReset]);
 
     React.useEffect(() => {
         const pickedNames = Object.keys(factions).filter(
@@ -178,7 +185,7 @@ export const ChooseFactionButtons = ({
                 const posInLastRow = isLastRow ? index - lastRowStart : 0;
                 const gridColumn = isLastRow ? `${posInLastRow * 2 + 2} / span 2` : 'span 2';
                 // Human picks (not from the last fill) stay locked across re-rolls.
-                const lockedPick =
+                const isLockedPick =
                     faction.status === IS_PICKED && !fillGeneratedSet.has(faction.name);
 
                 return (
@@ -187,7 +194,7 @@ export const ChooseFactionButtons = ({
                             handleFactionClick={handleFactionClick}
                             faction={faction}
                             isBanMode={isBanMode}
-                            lockedPick={lockedPick}
+                            isLockedPick={isLockedPick}
                         />
                     </Box>
                 );
