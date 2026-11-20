@@ -405,3 +405,18 @@ test('random fill: disabled with reason when no valid spread', () => {
   expect(fillBtn).toBeDisabled();
   expect(fillBtn).toHaveAttribute('title', expect.stringMatching(/no valid faction spread/i));
 });
+
+test('reset after random fill clears to empty starting board', () => {
+  const { container } = render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: /fill random factions/i }));
+  expect(countPicked(container)).toBe(4);
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('OK');
+
+  fireEvent.click(screen.getByRole('button', { name: /reset/i }));
+
+  expect(countPicked(container)).toBe(0);
+  expect(container.querySelectorAll('[data-testid="NotInterestedOutlinedIcon"]')).toHaveLength(0);
+  const indicator = container.querySelector('[data-cy="reach-indicator"]');
+  expect(indicator).toHaveTextContent('Reach: 0 / 21+');
+  expect(indicator).toHaveTextContent('Below target');
+});

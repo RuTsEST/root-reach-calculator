@@ -48,7 +48,9 @@ export const ChooseFactionButtons = ({
     const [factions, setFactions] = React.useState(() => factionsFromSession());
     // Picks created by the last Fill; re-roll clears only these and keeps manual picks.
     const [fillGeneratedNames, setFillGeneratedNames] = React.useState([]);
-    const lastHandledFillRequest = React.useRef(0);
+    // Seed with the current id so a remount (e.g. reset) does not re-apply an
+    // already-handled fillRequestId from the parent.
+    const lastHandledFillRequest = React.useRef(fillRequestId);
 
     const setAvailableFactions = React.useCallback((previousFactions) => {
         const factions = {...previousFactions};
