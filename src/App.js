@@ -1,16 +1,30 @@
 import './App.css';
 import * as React from "react";
-import { Box, CssBaseline, IconButton, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import {
+    Box,
+    Button,
+    CssBaseline,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    Link,
+    ToggleButton,
+    ToggleButtonGroup,
+    Typography,
+} from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CasinoIcon from "@mui/icons-material/Casino";
 import FeedbackOutlinedIcon from "@mui/icons-material/FeedbackOutlined";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { PlayerCountButtons } from "./components/PlayerCountButtons";
 import { ChooseFactionButtons } from "./components/ChooseFactionButtons";
 import { ThemeToggleButton } from "./components/ThemeToggleButton";
 import { DEFAULT_SELECTION, REACH_THRESHOLDS } from "./data/reachThresholds";
 import { loadSession, saveSession } from "./sessionStorage";
-import { FEEDBACK_URL } from "./constants";
+import { FEEDBACK_URL, REACH_LAW_URL } from "./constants";
 import {
     getSystemPrefersDark,
     loadThemePreference,
@@ -21,18 +35,76 @@ import {
 } from "./theme";
 
 const ReachIndicator = ({ reach, requiredReach }) => {
+    const [helpOpen, setHelpOpen] = React.useState(false);
     const isMet = reach >= requiredReach;
     const statusCue = isMet ? 'OK' : 'Below target';
     return (
-        <h3
-            className="reach"
-            data-cy="reach-indicator"
-            aria-live="polite"
-            style={{ color: isMet ? '#4da251' : '#b66969' }}
-        >
-            <span className="reach-values">Reach: {reach} / {requiredReach}+</span>
-            <span className="reach-status">{statusCue}</span>
-        </h3>
+        <>
+            <h3
+                className="reach"
+                data-cy="reach-indicator"
+                aria-live="polite"
+            >
+                <span className="reach-values-row">
+                    <span
+                        className="reach-values"
+                        style={{ color: isMet ? '#4da251' : '#b66969' }}
+                    >
+                        Reach: {reach} / {requiredReach}+
+                    </span>
+                    <IconButton
+                        className="reach-help"
+                        size="small"
+                        aria-label="What is Reach?"
+                        title="What is Reach?"
+                        data-cy="reach-help"
+                        onClick={() => setHelpOpen(true)}
+                    >
+                        <HelpOutlineIcon fontSize="inherit" />
+                    </IconButton>
+                </span>
+                <span
+                    className="reach-status"
+                    style={{ color: isMet ? '#4da251' : '#b66969' }}
+                >
+                    {statusCue}
+                </span>
+            </h3>
+            <Dialog
+                open={helpOpen}
+                onClose={() => setHelpOpen(false)}
+                aria-labelledby="reach-help-title"
+                fullWidth
+                maxWidth="xs"
+                scroll="paper"
+            >
+                <DialogTitle id="reach-help-title">Reach</DialogTitle>
+                <DialogContent dividers className="reach-help-dialog-body">
+                    <Typography variant="body2" paragraph>
+                        Reach is how much presence a faction has on the board.
+                    </Typography>
+                    <Typography variant="body2" paragraph>
+                        Depending on the number of players, it’s recommended to have enough
+                        Reach across everyone at the table for a balanced game.
+                    </Typography>
+                    <Typography variant="body2">
+                        <Link
+                            href={REACH_LAW_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-cy="reach-law-link"
+                        >
+                            Reach targets in Law of Root
+                        </Link>
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setHelpOpen(false)} autoFocus>
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
     );
 };
 

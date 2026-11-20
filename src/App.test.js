@@ -1,8 +1,8 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import App from './App';
 import { STORAGE_KEY } from './sessionStorage';
 import { THEME_STORAGE_KEY } from './theme';
-import { FEEDBACK_URL, IS_BANNED, IS_PICKED } from './constants';
+import { FEEDBACK_URL, REACH_LAW_URL, IS_BANNED, IS_PICKED } from './constants';
 
 function mockMatchMedia(matchesDark) {
   window.matchMedia = jest.fn().mockImplementation((query) => ({
@@ -45,7 +45,8 @@ test('defaults to Pick mode with Pick left of Ban', () => {
 test('reach indicator is red when reach is below required', () => {
   const { container } = render(<App />);
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
-  expect(indicator).toHaveStyle({ color: '#b66969' });
+  expect(indicator.querySelector('.reach-values')).toHaveStyle({ color: '#b66969' });
+  expect(indicator.querySelector('.reach-status')).toHaveStyle({ color: '#b66969' });
   expect(indicator).toHaveTextContent('Below target');
 });
 
@@ -57,8 +58,40 @@ test('reach indicator turns green when reach meets required', () => {
   fireEvent.click(container.querySelector('[data-cy="duchy"]'));
   fireEvent.click(container.querySelector('[data-cy="hundreds"]'));
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
-  expect(indicator).toHaveStyle({ color: '#4da251' });
+  expect(indicator.querySelector('.reach-values')).toHaveStyle({ color: '#4da251' });
+  expect(indicator.querySelector('.reach-status')).toHaveStyle({ color: '#4da251' });
   expect(indicator).toHaveTextContent('OK');
+});
+
+test('reach help opens explainer dialog with law link', async () => {
+  const { container } = render(<App />);
+  const help = container.querySelector('[data-cy="reach-help"]');
+  expect(help).toBeInTheDocument();
+  expect(container.querySelector('.app-header [data-cy="reach-help"]')).toBe(help);
+  expect(container.querySelector('.app-footer [data-cy="reach-help"]')).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /what is reach\?/i })).toBe(help);
+
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  fireEvent.click(help);
+
+  const dialog = await screen.findByRole('dialog');
+  expect(dialog).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: /^reach$/i })).toBeInTheDocument();
+  expect(dialog).toHaveTextContent(/how much presence a faction has on the board/i);
+  expect(dialog).toHaveTextContent(/enough Reach across everyone at the table for a balanced game/i);
+  expect(dialog).not.toHaveTextContent('Using this calculator');
+  expect(dialog).not.toHaveTextContent(/Viable Reach Sum/i);
+
+  const lawLink = screen.getByRole('link', { name: /reach targets in law of root/i });
+  expect(lawLink).toHaveAttribute('href', REACH_LAW_URL);
+  expect(lawLink).toHaveAttribute('target', '_blank');
+  expect(lawLink).toHaveAttribute('rel', expect.stringMatching(/noopener/));
+  expect(lawLink).toHaveAttribute('rel', expect.stringMatching(/noreferrer/));
+
+  fireEvent.click(screen.getByRole('button', { name: /^close$/i }));
+  await waitFor(() => {
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
 });
 
 test('pick mode: clicking a faction adds its reach to the total', () => {
@@ -359,7 +392,7 @@ function isPickedFab(el) {
 function countPicked(container) {
   return Array.from(container.querySelectorAll('[data-cy]')).filter((el) => {
     const cy = el.getAttribute('data-cy');
-    if (!cy || cy === 'reach-indicator' || cy === 'theme-toggle' || cy === 'random-fill' || cy === 'feedback-link') {
+    if (!cy || cy === 'reach-indicator' || cy === 'reach-help' || cy === 'theme-toggle' || cy === 'random-fill' || cy === 'feedback-link') {
       return false;
     }
     if (cy === 'pick-fill' || cy === 'pick-locked') return false;
@@ -371,7 +404,7 @@ function pickedFactionNames(container) {
   return Array.from(container.querySelectorAll('[data-cy]'))
     .filter((el) => {
       const cy = el.getAttribute('data-cy');
-      if (!cy || cy === 'reach-indicator' || cy === 'theme-toggle' || cy === 'random-fill' || cy === 'feedback-link') {
+      if (!cy || cy === 'reach-indicator' || cy === 'reach-help' || cy === 'theme-toggle' || cy === 'random-fill' || cy === 'feedback-link') {
         return false;
       }
       if (cy === 'pick-fill' || cy === 'pick-locked') return false;
