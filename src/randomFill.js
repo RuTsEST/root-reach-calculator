@@ -97,12 +97,32 @@ export function canCompleteRandomFill(args) {
     return listValidCompletions(args).length > 0;
 }
 
+/** Order-independent equality for two fill name lists. */
+export function sameFillSet(a, b) {
+    if (!a || !b || a.length !== b.length) return false;
+    const other = new Set(b);
+    for (const name of a) {
+        if (!other.has(name)) return false;
+    }
+    return true;
+}
+
+/** Bounded resamples when avoiding a duplicate of the previous fill. */
+export const AVOID_DUPLICATE_ATTEMPTS = 8;
+
 /**
  * Pure random choice among legal completions.
  * Returns { ok: true, fillNames } or { ok: false, reason }.
  * `rng` is optional () => [0,1) for tests.
+ * If `options.excludeFillNames` matches the first sample, resample up to
+ * `options.maxAttempts` (default AVOID_DUPLICATE_ATTEMPTS) times; accept a
+ * duplicate only when every attempt lands on the same set (e.g. sole option).
  */
-export function pickRandomCompletion(args, rng = Math.random) {
+export function pickRandomCompletion(args, rng = Math.random, options = {}) {
+    const {
+        excludeFillNames = null,
+        maxAttempts = AVOID_DUPLICATE_ATTEMPTS,
+    } = options;
     const completions = listValidCompletions(args);
     if (completions.length === 0) {
         return {
@@ -111,11 +131,21 @@ export function pickRandomCompletion(args, rng = Math.random) {
             fillNames: [],
         };
     }
-    const index = Math.floor(rng() * completions.length);
+
+    const attempts = Math.max(1, maxAttempts);
+    let fillNames = completions[Math.floor(rng() * completions.length)];
+
+    if (excludeFillNames && excludeFillNames.length > 0) {
+        for (let i = 1; i < attempts; i++) {
+            if (!sameFillSet(fillNames, excludeFillNames)) break;
+            fillNames = completions[Math.floor(rng() * completions.length)];
+        }
+    }
+
     return {
         ok: true,
         reason: '',
-        fillNames: completions[index],
+        fillNames,
     };
 }
 

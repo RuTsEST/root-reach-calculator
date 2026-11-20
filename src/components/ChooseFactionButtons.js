@@ -183,7 +183,9 @@ export const ChooseFactionButtons = ({
             requiredReach,
             fillGeneratedNames
         );
-        const result = pickRandomCompletion(args);
+        const result = pickRandomCompletion(args, Math.random, {
+            excludeFillNames: fillGeneratedNames,
+        });
         if (!result.ok) {
             reportFillState(factions, fillGeneratedNames);
             return;
