@@ -1,15 +1,8 @@
 import * as React from 'react';
 import { Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
+import { playerCountFromKey, playerCountKeyFromCount } from '../data/reachThresholds';
 
 const PLAYER_OPTIONS = ['2', '3', '4', '5', '6'];
-
-const parsePlayers = (value) => {
-    if (typeof value === 'string' && value.startsWith('player')) {
-        const n = Number(value.slice('player'.length));
-        if (n >= 2 && n <= 6) return n;
-    }
-    return 4;
-};
 
 const labelSx = {
     color: 'text.secondary',
@@ -34,15 +27,15 @@ const groupSx = {
     },
 };
 
-export const PlayerCountButtons = ({ selectedValue, handleToggleButtonChange }) => {
-    const players = parsePlayers(selectedValue);
+export const PlayerCountButtons = ({ playerCountKey, onPlayerCountChange }) => {
+    const players = playerCountFromKey(playerCountKey);
 
     const handlePlayersChange = (_, newPlayers) => {
         if (newPlayers === null) return;
         const nextPlayers = Number(newPlayers);
         if (nextPlayers === players) return;
         if (nextPlayers < 2 || nextPlayers > 6) return;
-        handleToggleButtonChange(null, `player${nextPlayers}`);
+        onPlayerCountChange(playerCountKeyFromCount(nextPlayers));
     };
 
     return (

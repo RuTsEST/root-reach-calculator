@@ -1,10 +1,17 @@
 const STORAGE_KEY = 'root-reach-calculator-session';
 
 const DEFAULT_SESSION = {
-    selectedValue: 'player4',
+    playerCountKey: 'player4',
     isBanMode: false,
     factionStatuses: {},
 };
+
+function readPlayerCountKey(parsed) {
+    if (typeof parsed.playerCountKey === 'string') return parsed.playerCountKey;
+    // Migrate legacy selectedValue from earlier sessions.
+    if (typeof parsed.selectedValue === 'string') return parsed.selectedValue;
+    return DEFAULT_SESSION.playerCountKey;
+}
 
 export function loadSession() {
     try {
@@ -12,9 +19,7 @@ export function loadSession() {
         if (!raw) return { ...DEFAULT_SESSION };
         const parsed = JSON.parse(raw);
         return {
-            selectedValue: typeof parsed.selectedValue === 'string'
-                ? parsed.selectedValue
-                : DEFAULT_SESSION.selectedValue,
+            playerCountKey: readPlayerCountKey(parsed),
             isBanMode: Boolean(parsed.isBanMode),
             factionStatuses:
                 parsed.factionStatuses && typeof parsed.factionStatuses === 'object'
@@ -30,6 +35,8 @@ export function saveSession(partial) {
     try {
         const current = loadSession();
         const next = { ...current, ...partial };
+        // Persist only the new key; drop legacy selectedValue on write.
+        delete next.selectedValue;
         window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     } catch {
         // Ignore quota / private-mode failures

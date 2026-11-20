@@ -177,6 +177,22 @@ test('legacy clockwork session keys fall back to default player4', () => {
   expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 0 / 21+');
 });
 
+test('migrates legacy selectedValue session key to playerCountKey on write', () => {
+  window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+    selectedValue: 'player3',
+    isBanMode: false,
+    factionStatuses: {},
+  }));
+  const { container } = render(<App />);
+  expect(screen.getByRole('button', { name: /^3 players$/i })).toHaveAttribute('aria-pressed', 'true');
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 0 / 18+');
+
+  fireEvent.click(screen.getByRole('button', { name: /^5 players$/i }));
+  const stored = JSON.parse(window.sessionStorage.getItem(STORAGE_KEY));
+  expect(stored.playerCountKey).toBe('player5');
+  expect(stored.selectedValue).toBeUndefined();
+});
+
 test('reset button clears picked factions and returns reach to 0', () => {
   const { container } = render(<App />);
   fireEvent.click(container.querySelector('[data-cy="marquise"]'));
@@ -290,7 +306,7 @@ test('Homeland factions contribute their catalog reach', () => {
 
 test('sessionStorage restores picks, bans, mode, and player selection', () => {
   window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
-    selectedValue: 'player3',
+    playerCountKey: 'player3',
     isBanMode: true,
     factionStatuses: {
       marquise: IS_PICKED,
