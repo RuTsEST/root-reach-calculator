@@ -109,12 +109,12 @@ const ReachIndicator = ({ reach, requiredReach }) => {
 };
 
 function selectionFromSession(session) {
-    const key = REACH_THRESHOLDS[session.selectedValue]
-        ? session.selectedValue
+    const key = REACH_THRESHOLDS[session.playerCountKey]
+        ? session.playerCountKey
         : DEFAULT_SELECTION;
     const values = REACH_THRESHOLDS[key];
     return {
-        selectedValue: key,
+        playerCountKey: key,
         requiredReach: values.requiredReach,
         playerCount: values.playerCount,
         isBanMode: session.isBanMode,
@@ -127,7 +127,7 @@ function App() {
     const [reach, setReach] = React.useState(0);
     const [requiredReach, setRequiredReach] = React.useState(initial.requiredReach);
     const [playerCount, setPlayerCount] = React.useState(initial.playerCount);
-    const [selectedValue, setSelectedValue] = React.useState(initial.selectedValue);
+    const [playerCountKey, setPlayerCountKey] = React.useState(initial.playerCountKey);
     const [isBanMode, setIsBanMode] = React.useState(initial.isBanMode);
     const [resetKey, setResetKey] = React.useState(0);
     const [fillRequestId, setFillRequestId] = React.useState(0);
@@ -162,16 +162,14 @@ function App() {
         saveThemePreference(next);
     }, [themePreference]);
 
-    const handleToggleButtonChange = React.useCallback((event, newValue) => {
-        if (newValue !== null) {
-            const values = REACH_THRESHOLDS[newValue];
-            if (values) {
-                setSelectedValue(newValue);
-                setRequiredReach(values.requiredReach);
-                setPlayerCount(values.playerCount);
-                saveSession({ selectedValue: newValue });
-            }
-        }
+    const onPlayerCountChange = React.useCallback((newKey) => {
+        if (newKey == null) return;
+        const values = REACH_THRESHOLDS[newKey];
+        if (!values) return;
+        setPlayerCountKey(newKey);
+        setRequiredReach(values.requiredReach);
+        setPlayerCount(values.playerCount);
+        saveSession({ playerCountKey: newKey });
     }, []);
 
     const handleBanModeChange = React.useCallback((_, v) => {
@@ -258,8 +256,8 @@ function App() {
                 </Box>
                 <Box className="app-footer">
                     <PlayerCountButtons
-                        selectedValue={selectedValue}
-                        handleToggleButtonChange={handleToggleButtonChange}
+                        playerCountKey={playerCountKey}
+                        onPlayerCountChange={onPlayerCountChange}
                     />
                     <Box className="app-footer-config" aria-label="Settings">
                         <ThemeToggleButton preference={themePreference} onToggle={handleThemeToggle} />
