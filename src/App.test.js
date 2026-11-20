@@ -322,3 +322,86 @@ test('stored theme preference survives remount within the session', () => {
   expect(again.container.querySelector('[data-theme="dark"]')).toBeInTheDocument();
   expect(window.sessionStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
 });
+
+function countPicked(container) {
+  return Array.from(container.querySelectorAll('[data-cy]')).filter((el) => {
+    const cy = el.getAttribute('data-cy');
+    if (!cy || cy === 'reach-indicator' || cy === 'theme-toggle' || cy === 'random-fill') {
+      return false;
+    }
+    return Boolean(el.querySelector('[data-testid="CheckCircleOutlineIcon"]'));
+  }).length;
+}
+
+function pickedFactionNames(container) {
+  return Array.from(container.querySelectorAll('[data-cy]'))
+    .filter((el) => {
+      const cy = el.getAttribute('data-cy');
+      if (!cy || cy === 'reach-indicator' || cy === 'theme-toggle' || cy === 'random-fill') {
+        return false;
+      }
+      return Boolean(el.querySelector('[data-testid="CheckCircleOutlineIcon"]'));
+    })
+    .map((el) => el.getAttribute('data-cy'));
+}
+
+test('random fill: empty board fills exactly Players with reach OK', () => {
+  const { container } = render(<App />);
+  const fillBtn = screen.getByRole('button', { name: /fill random factions/i });
+  expect(fillBtn).not.toBeDisabled();
+
+  fireEvent.click(fillBtn);
+
+  expect(countPicked(container)).toBe(4);
+  const indicator = container.querySelector('[data-cy="reach-indicator"]');
+  expect(indicator).toHaveTextContent('OK');
+  const reachMatch = indicator.textContent.match(/Reach:\s*(\d+)/);
+  expect(Number(reachMatch[1])).toBeGreaterThanOrEqual(21);
+});
+
+test('random fill: keeps locked picks and only fills remaining seats', () => {
+  const { container } = render(<App />);
+  fireEvent.click(container.querySelector('[data-cy="marquise"]'));
+  fireEvent.click(container.querySelector('[data-cy="duchy"]'));
+
+  fireEvent.click(screen.getByRole('button', { name: /fill random factions/i }));
+
+  const picked = pickedFactionNames(container);
+  expect(picked).toHaveLength(4);
+  expect(picked).toContain('marquise');
+  expect(picked).toContain('duchy');
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('OK');
+});
+
+test('random fill: respects bans', () => {
+  const { container } = render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: /^ban$/i }));
+  fireEvent.click(container.querySelector('[data-cy="marquise"]'));
+  fireEvent.click(container.querySelector('[data-cy="hundreds"]'));
+  fireEvent.click(screen.getByRole('button', { name: /^pick$/i }));
+
+  fireEvent.click(screen.getByRole('button', { name: /fill random factions/i }));
+
+  const picked = pickedFactionNames(container);
+  expect(picked).toHaveLength(4);
+  expect(picked).not.toContain('marquise');
+  expect(picked).not.toContain('hundreds');
+  expect(container.querySelector('[data-cy="marquise"]')
+    .querySelector('[data-testid="NotInterestedOutlinedIcon"]')).toBeInTheDocument();
+});
+
+test('random fill: disabled with reason when no valid spread', () => {
+  const { container } = render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: /^ban$/i }));
+  // Ban enough high-reach factions that 4p / 21+ is impossible
+  [
+    'marquise', 'hundreds', 'duchy', 'keepers', 'eyrie', 'lilypad',
+    'riverfolk', 'vagabond1', 'twilight', 'knaves',
+  ].forEach((name) => {
+    fireEvent.click(container.querySelector(`[data-cy="${name}"]`));
+  });
+
+  const fillBtn = screen.getByRole('button', { name: /fill random factions/i });
+  expect(fillBtn).toBeDisabled();
+  expect(fillBtn).toHaveAttribute('title', expect.stringMatching(/no valid faction spread/i));
+});
