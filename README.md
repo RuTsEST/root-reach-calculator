@@ -11,6 +11,7 @@ Live at **https://rutsest.github.io/root-reach-calculator/**
 - **Ban vs Pick** — Ban marks factions out of the draft without adding reach; Pick selects them and adds their reach to the total. Switch with the Ban/Pick toggle.
 - **Players** — Choose a player count (2–6). The reach target follows [Law of Root](https://ledergames.com/products/root-a-game-of-woodland-might-and-right) Viable Reach Sums (17 / 18 / 21 / 25 / 28). Clockwork bots are out of scope — official guidance is that bots have no reach and reach checks do not apply to bot setups.
 - **Encoded special rules** — Second Vagabond is only available after the first is picked; Knaves of the Deepwood and either Vagabond are mutually exclusive. Factions that cannot still meet the reach target are grayed out.
+- **Feedback** — Ideas and feature requests go in [GitHub Discussions → Ideas](https://github.com/RuTsEST/root-reach-calculator/discussions/categories/ideas) (same link as the quiet footer control in the app).
 
 ## Development
 

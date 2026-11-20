@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import App from './App';
 import { STORAGE_KEY } from './sessionStorage';
 import { THEME_STORAGE_KEY } from './theme';
-import { IS_BANNED, IS_PICKED } from './constants';
+import { FEEDBACK_URL, IS_BANNED, IS_PICKED } from './constants';
 
 function mockMatchMedia(matchesDark) {
   window.matchMedia = jest.fn().mockImplementation((query) => ({
@@ -188,6 +188,18 @@ test('footer is players only (no bots, no disclaimer line)', () => {
   expect(queryByLabelText('Bots')).not.toBeInTheDocument();
 });
 
+test('footer feedback link opens Discussions Ideas in a new tab', () => {
+  const { container } = render(<App />);
+  const link = container.querySelector('[data-cy="feedback-link"]');
+  expect(link).toBeInTheDocument();
+  expect(link).toHaveAttribute('href', FEEDBACK_URL);
+  expect(link).toHaveAttribute('aria-label', 'Leave feedback on GitHub');
+  expect(link).toHaveAttribute('target', '_blank');
+  expect(link).toHaveAttribute('rel', expect.stringMatching(/noopener/));
+  expect(link).toHaveAttribute('rel', expect.stringMatching(/noreferrer/));
+  expect(screen.getByRole('link', { name: /leave feedback on github/i })).toBe(link);
+});
+
 test('vagabond2 stays unavailable until vagabond1 is picked', () => {
   const { container } = render(<App />);
   const vagabond2 = container.querySelector('[data-cy="vagabond2"]');
@@ -333,7 +345,7 @@ function isPickedFab(el) {
 function countPicked(container) {
   return Array.from(container.querySelectorAll('[data-cy]')).filter((el) => {
     const cy = el.getAttribute('data-cy');
-    if (!cy || cy === 'reach-indicator' || cy === 'theme-toggle' || cy === 'random-fill') {
+    if (!cy || cy === 'reach-indicator' || cy === 'theme-toggle' || cy === 'random-fill' || cy === 'feedback-link') {
       return false;
     }
     if (cy === 'pick-fill' || cy === 'pick-locked') return false;
@@ -345,7 +357,7 @@ function pickedFactionNames(container) {
   return Array.from(container.querySelectorAll('[data-cy]'))
     .filter((el) => {
       const cy = el.getAttribute('data-cy');
-      if (!cy || cy === 'reach-indicator' || cy === 'theme-toggle' || cy === 'random-fill') {
+      if (!cy || cy === 'reach-indicator' || cy === 'theme-toggle' || cy === 'random-fill' || cy === 'feedback-link') {
         return false;
       }
       if (cy === 'pick-fill' || cy === 'pick-locked') return false;
