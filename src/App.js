@@ -85,7 +85,7 @@ const ReachIndicator = ({ reach, requiredReach }) => {
                     </Typography>
                     <Typography variant="body2" paragraph>
                         Depending on the number of players, it’s recommended to have enough
-                        Reach across everyone at the table.
+                        Reach across everyone at the table for a balanced game.
                     </Typography>
                     <Typography variant="body2">
                         <Link
