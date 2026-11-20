@@ -80,20 +80,12 @@ const ReachIndicator = ({ reach, requiredReach }) => {
             >
                 <DialogTitle id="reach-help-title">Reach</DialogTitle>
                 <DialogContent dividers className="reach-help-dialog-body">
-                    <Typography variant="subtitle2" component="h4" gutterBottom>
-                        What is Reach?
+                    <Typography variant="body2" paragraph>
+                        Reach is how much presence a faction has on the board.
                     </Typography>
                     <Typography variant="body2" paragraph>
-                        Reach is a rough score for how strong a faction feels at the table —
-                        higher Reach means more presence in the setup. Add up the factions you
-                        pick; your player count needs a minimum total.
-                    </Typography>
-                    <Typography variant="subtitle2" component="h4" gutterBottom>
-                        Why it matters
-                    </Typography>
-                    <Typography variant="body2" paragraph>
-                        Miss the target and the game is usually too soft or awkward for that
-                        player count.
+                        Depending on the number of players, it’s recommended to have enough
+                        Reach across everyone at the table.
                     </Typography>
                     <Typography variant="body2">
                         <Link

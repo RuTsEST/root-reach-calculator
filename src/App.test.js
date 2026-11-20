@@ -77,9 +77,8 @@ test('reach help opens explainer dialog with law link', async () => {
   const dialog = await screen.findByRole('dialog');
   expect(dialog).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /^reach$/i })).toBeInTheDocument();
-  expect(dialog).toHaveTextContent('What is Reach?');
-  expect(dialog).toHaveTextContent('Why it matters');
-  expect(dialog).toHaveTextContent(/how strong a faction feels/i);
+  expect(dialog).toHaveTextContent(/how much presence a faction has on the board/i);
+  expect(dialog).toHaveTextContent(/enough Reach across everyone at the table/i);
   expect(dialog).not.toHaveTextContent('Using this calculator');
   expect(dialog).not.toHaveTextContent(/Viable Reach Sum/i);
 
