@@ -30,6 +30,18 @@ test('reach indicator renders with initial value', () => {
   expect(indicator).toHaveTextContent('Below target');
 });
 
+test('defaults to Pick mode with Pick left of Ban', () => {
+  render(<App />);
+  const pick = screen.getByRole('button', { name: /^pick$/i });
+  const ban = screen.getByRole('button', { name: /^ban$/i });
+  expect(pick).toHaveAttribute('aria-pressed', 'true');
+  expect(ban).toHaveAttribute('aria-pressed', 'false');
+  // Document order: Pick before Ban
+  expect(
+    pick.compareDocumentPosition(ban) & Node.DOCUMENT_POSITION_FOLLOWING
+  ).toBeTruthy();
+});
+
 test('reach indicator is red when reach is below required', () => {
   const { container } = render(<App />);
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
