@@ -79,9 +79,11 @@ test('reach help opens explainer dialog with law link', async () => {
   expect(screen.getByRole('heading', { name: /^reach$/i })).toBeInTheDocument();
   expect(dialog).toHaveTextContent('What is Reach?');
   expect(dialog).toHaveTextContent('Why it matters');
-  expect(dialog).toHaveTextContent('Using this calculator');
+  expect(dialog).toHaveTextContent(/how strong a faction feels/i);
+  expect(dialog).not.toHaveTextContent('Using this calculator');
+  expect(dialog).not.toHaveTextContent(/Viable Reach Sum/i);
 
-  const lawLink = screen.getByRole('link', { name: /law of root — viable reach sums/i });
+  const lawLink = screen.getByRole('link', { name: /reach targets in law of root/i });
   expect(lawLink).toHaveAttribute('href', REACH_LAW_URL);
   expect(lawLink).toHaveAttribute('target', '_blank');
   expect(lawLink).toHaveAttribute('rel', expect.stringMatching(/noopener/));

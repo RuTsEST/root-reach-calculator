@@ -84,24 +84,16 @@ const ReachIndicator = ({ reach, requiredReach }) => {
                         What is Reach?
                     </Typography>
                     <Typography variant="body2" paragraph>
-                        Every faction has a Reach number. Add up the Reach of the factions you pick.
-                        Your player count needs a minimum total (Viable Reach Sum).
+                        Reach is a rough score for how strong a faction feels at the table —
+                        higher Reach means more presence in the setup. Add up the factions you
+                        pick; your player count needs a minimum total.
                     </Typography>
                     <Typography variant="subtitle2" component="h4" gutterBottom>
                         Why it matters
                     </Typography>
                     <Typography variant="body2" paragraph>
-                        Below the target, the table is usually too soft or awkward. Hitting the sum
-                        is the official “viable” bar from Law of Root.
-                    </Typography>
-                    <Typography variant="subtitle2" component="h4" gutterBottom>
-                        Using this calculator
-                    </Typography>
-                    <Typography variant="body2" paragraph>
-                        Pick adds Reach; Ban marks a faction out without adding it. Choose 2–6
-                        players to set the target shown in the header. Gray factions can’t still
-                        reach the target. Dice fill picks a legal set that meets Reach when
-                        possible. Green OK means you’re at or above the target.
+                        Miss the target and the game is usually too soft or awkward for that
+                        player count.
                     </Typography>
                     <Typography variant="body2">
                         <Link
@@ -110,7 +102,7 @@ const ReachIndicator = ({ reach, requiredReach }) => {
                             rel="noopener noreferrer"
                             data-cy="reach-law-link"
                         >
-                            Law of Root — Viable Reach Sums
+                            Reach targets in Law of Root
                         </Link>
                     </Typography>
                 </DialogContent>
