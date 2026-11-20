@@ -4,11 +4,13 @@ import { Box, CssBaseline, IconButton, ToggleButton, ToggleButtonGroup } from "@
 import { ThemeProvider } from "@mui/material/styles";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CasinoIcon from "@mui/icons-material/Casino";
+import FeedbackOutlinedIcon from "@mui/icons-material/FeedbackOutlined";
 import { PlayerCountButtons } from "./components/PlayerCountButtons";
 import { ChooseFactionButtons } from "./components/ChooseFactionButtons";
 import { ThemeToggleButton } from "./components/ThemeToggleButton";
 import { DEFAULT_SELECTION, REACH_THRESHOLDS } from "./data/reachThresholds";
 import { loadSession, saveSession } from "./sessionStorage";
+import { FEEDBACK_URL } from "./constants";
 import {
     getSystemPrefersDark,
     loadThemePreference,
@@ -188,6 +190,21 @@ function App() {
                         selectedValue={selectedValue}
                         handleToggleButtonChange={handleToggleButtonChange}
                     />
+                    <IconButton
+                        className="feedback-link"
+                        component="a"
+                        href={FEEDBACK_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        size="small"
+                        aria-label="Leave feedback on GitHub"
+                        title="Leave feedback on GitHub"
+                        data-cy="feedback-link"
+                        color="default"
+                        sx={{ color: 'action.active', opacity: 0.55 }}
+                    >
+                        <FeedbackOutlinedIcon fontSize="small" />
+                    </IconButton>
                 </Box>
             </Box>
         </ThemeProvider>
