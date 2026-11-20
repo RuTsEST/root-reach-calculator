@@ -156,7 +156,6 @@ function App() {
                     </ToggleButtonGroup>
                     <ReachIndicator reach={reach} requiredReach={requiredReach} />
                     <Box className="app-header-actions">
-                        <ThemeToggleButton preference={themePreference} onToggle={handleThemeToggle} />
                         <IconButton
                             onClick={handleRandomFill}
                             size="small"
@@ -190,21 +189,23 @@ function App() {
                         selectedValue={selectedValue}
                         handleToggleButtonChange={handleToggleButtonChange}
                     />
-                    <IconButton
-                        className="feedback-link"
-                        component="a"
-                        href={FEEDBACK_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        size="small"
-                        aria-label="Leave feedback on GitHub"
-                        title="Leave feedback on GitHub"
-                        data-cy="feedback-link"
-                        color="default"
-                        sx={{ color: 'action.active', opacity: 0.55 }}
-                    >
-                        <FeedbackOutlinedIcon fontSize="small" />
-                    </IconButton>
+                    <Box className="app-footer-config" aria-label="Settings">
+                        <ThemeToggleButton preference={themePreference} onToggle={handleThemeToggle} />
+                        <IconButton
+                            className="feedback-link"
+                            component="a"
+                            href={FEEDBACK_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            size="small"
+                            aria-label="Leave feedback on GitHub"
+                            title="Leave feedback on GitHub"
+                            data-cy="feedback-link"
+                            color="default"
+                        >
+                            <FeedbackOutlinedIcon fontSize="small" />
+                        </IconButton>
+                    </Box>
                 </Box>
             </Box>
         </ThemeProvider>

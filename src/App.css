@@ -106,13 +106,27 @@
   border-top: 1px solid var(--chrome-border);
 }
 
-/* Quiet corner control — absolute so it does not grow the Players row */
-.app-footer .feedback-link {
+/* Quiet config group (theme + feedback) — absolute so Players stays the focus */
+.app-footer-config {
   position: absolute;
-  right: 0.15rem;
+  right: 0.1rem;
   top: 50%;
   transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  z-index: 1;
+}
+
+.app-footer-config .MuiIconButton-root {
   padding: 0.25rem;
+  color: inherit;
+  opacity: 0.55;
+}
+
+/* Keep centered Players chips clear of the corner config icons */
+.app-footer .player-count-bar {
+  padding-right: 4.5rem;
 }
 
 .app-main {

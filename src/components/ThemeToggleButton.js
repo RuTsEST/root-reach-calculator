@@ -12,7 +12,7 @@ const LABELS = {
 };
 
 /**
- * Compact header control: cycles system → light → dark → system.
+ * Compact footer config control: cycles system → light → dark → system.
  * Icon shows the current preference (not only the resolved palette).
  */
 export function ThemeToggleButton({ preference, onToggle }) {
