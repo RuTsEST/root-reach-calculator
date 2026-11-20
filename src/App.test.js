@@ -60,7 +60,7 @@ test('reach indicator turns green when reach meets required', () => {
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
   expect(indicator.querySelector('.reach-values')).toHaveStyle({ color: '#4da251' });
   expect(indicator.querySelector('.reach-status')).toHaveStyle({ color: '#4da251' });
-  expect(indicator).toHaveTextContent('OK');
+  expect(indicator).toHaveTextContent('Viable');
 });
 
 test('reach help opens explainer dialog with law link', async () => {
@@ -429,7 +429,7 @@ function pickedFactionNames(container) {
     .map((el) => el.getAttribute('data-cy'));
 }
 
-test('random fill: empty board fills exactly Players with reach OK', () => {
+test('random fill: empty board fills exactly Players with reach Viable', () => {
   const { container } = render(<App />);
   const fillBtn = screen.getByRole('button', { name: /fill random factions/i });
   expect(fillBtn).not.toBeDisabled();
@@ -438,7 +438,7 @@ test('random fill: empty board fills exactly Players with reach OK', () => {
 
   expect(countPicked(container)).toBe(4);
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
-  expect(indicator).toHaveTextContent('OK');
+  expect(indicator).toHaveTextContent('Viable');
   const reachMatch = indicator.textContent.match(/Reach:\s*(\d+)/);
   expect(Number(reachMatch[1])).toBeGreaterThanOrEqual(21);
 });
@@ -454,7 +454,7 @@ test('random fill: keeps locked picks and only fills remaining seats', () => {
   expect(picked).toHaveLength(4);
   expect(picked).toContain('marquise');
   expect(picked).toContain('duchy');
-  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('OK');
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Viable');
 });
 
 test('random fill: respects bans', () => {
@@ -494,7 +494,7 @@ test('reset after random fill clears to empty starting board', () => {
   const { container } = render(<App />);
   fireEvent.click(screen.getByRole('button', { name: /fill random factions/i }));
   expect(countPicked(container)).toBe(4);
-  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('OK');
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Viable');
 
   fireEvent.click(screen.getByRole('button', { name: /reset/i }));
 
