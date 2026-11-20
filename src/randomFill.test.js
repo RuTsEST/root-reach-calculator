@@ -1,10 +1,12 @@
 import {
+    AVOID_DUPLICATE_ATTEMPTS,
     canCompleteRandomFill,
     combinations,
     fillDisabledReason,
     isLegalPickSet,
     listValidCompletions,
     pickRandomCompletion,
+    sameFillSet,
     statusesToFillArgs,
     totalReachForNames,
 } from './randomFill';
@@ -105,6 +107,13 @@ describe('listValidCompletions', () => {
     });
 });
 
+describe('sameFillSet', () => {
+    test('ignores order', () => {
+        expect(sameFillSet(['a', 'b'], ['b', 'a'])).toBe(true);
+        expect(sameFillSet(['a', 'b'], ['a', 'c'])).toBe(false);
+    });
+});
+
 describe('pickRandomCompletion', () => {
     test('uses rng to select among completions', () => {
         const args = {
@@ -136,6 +145,63 @@ describe('pickRandomCompletion', () => {
         });
         expect(result.ok).toBe(false);
         expect(result.reason).toMatch(/no valid faction spread/i);
+    });
+
+    test('retries when duplicate of previous fill', () => {
+        const args = {
+            lockedPicks: ['marquise'],
+            banned: [],
+            playerCount: 2,
+            requiredReach: 17,
+        };
+        const completions = listValidCompletions(args);
+        expect(completions.length).toBeGreaterThan(1);
+
+        const previous = completions[0];
+        const draws = [0, 0.999999];
+        let call = 0;
+        const rng = () => draws[Math.min(call++, draws.length - 1)];
+
+        const result = pickRandomCompletion(args, rng, {
+            excludeFillNames: previous,
+            maxAttempts: AVOID_DUPLICATE_ATTEMPTS,
+        });
+
+        expect(result.ok).toBe(true);
+        expect(sameFillSet(result.fillNames, previous)).toBe(false);
+        expect(result.fillNames).toEqual(completions[completions.length - 1]);
+        expect(call).toBe(2);
+    });
+
+    test('allows same fill if it is the only option', () => {
+        const catalog = {
+            marquise: { name: 'marquise', reach: 10 },
+            duchy: { name: 'duchy', reach: 8 },
+        };
+        const args = {
+            lockedPicks: [],
+            banned: [],
+            playerCount: 2,
+            requiredReach: 17,
+            catalog,
+        };
+        const completions = listValidCompletions(args);
+        expect(completions).toHaveLength(1);
+
+        let calls = 0;
+        const rng = () => {
+            calls += 1;
+            return 0;
+        };
+
+        const result = pickRandomCompletion(args, rng, {
+            excludeFillNames: completions[0],
+            maxAttempts: 5,
+        });
+
+        expect(result.ok).toBe(true);
+        expect(result.fillNames).toEqual(completions[0]);
+        expect(calls).toBe(5);
     });
 });
 
