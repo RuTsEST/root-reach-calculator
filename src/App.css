@@ -90,14 +90,38 @@
   line-height: 1.15;
 }
 
+.reach-values-row {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.05rem;
+  max-width: 100%;
+}
+
 .reach-values {
   white-space: nowrap;
+}
+
+.reach-help.MuiIconButton-root {
+  padding: 0.1rem;
+  margin: 0;
+  font-size: 0.95rem;
+  /* Match Ideas mute; stay chrome-neutral (not OK / Below target color) */
+  opacity: 0.6;
+  color: inherit;
+  flex-shrink: 0;
 }
 
 .reach-status {
   font-size: 0.75rem;
   font-weight: 600;
   line-height: 1.1;
+}
+
+/* Dialog body may scroll on short viewports; main UI stays no-scroll */
+.reach-help-dialog-body {
+  max-height: min(60vh, 28rem);
+  overflow-y: auto;
 }
 
 .app-footer {
@@ -211,6 +235,11 @@
 
   .reach {
     font-size: 0.82rem;
+  }
+
+  .reach-help.MuiIconButton-root {
+    font-size: 0.82rem;
+    padding: 0.05rem;
   }
 
   .reach-status {
