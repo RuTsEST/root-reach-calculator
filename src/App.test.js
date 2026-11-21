@@ -266,10 +266,11 @@ test('footer is players only (no bots, no disclaimer line)', () => {
   expect(queryByLabelText('Bots')).not.toBeInTheDocument();
 });
 
-test('footer feedback link opens Discussions Ideas in a new tab', () => {
+test('header feedback link opens Discussions Ideas in a new tab', () => {
   const { container } = render(<App />);
   const link = container.querySelector('[data-cy="feedback-link"]');
   expect(link).toBeInTheDocument();
+  expect(container.querySelector('.app-header [data-cy="feedback-link"]')).toBe(link);
   expect(link).toHaveAttribute('href', FEEDBACK_URL);
   expect(link).toHaveAttribute('aria-label', 'Leave feedback on GitHub');
   expect(link).toHaveAttribute('target', '_blank');
@@ -278,16 +279,27 @@ test('footer feedback link opens Discussions Ideas in a new tab', () => {
   expect(screen.getByRole('link', { name: /leave feedback on github/i })).toBe(link);
 });
 
-test('theme toggle lives in the footer config group next to feedback', () => {
+test('theme toggle lives in the header config group next to feedback', () => {
   const { container } = render(<App />);
-  const config = container.querySelector('.app-footer-config');
+  const config = container.querySelector('.app-header-config');
   const themeToggle = container.querySelector('[data-cy="theme-toggle"]');
   const feedback = container.querySelector('[data-cy="feedback-link"]');
   expect(config).toBeInTheDocument();
   expect(config).toContainElement(themeToggle);
   expect(config).toContainElement(feedback);
-  expect(container.querySelector('.app-header [data-cy="theme-toggle"]')).not.toBeInTheDocument();
-  expect(container.querySelector('.app-header [data-cy="random-fill"]')).toBeInTheDocument();
+  expect(container.querySelector('.app-footer [data-cy="theme-toggle"]')).not.toBeInTheDocument();
+  expect(container.querySelector('.app-footer [data-cy="feedback-link"]')).not.toBeInTheDocument();
+});
+
+test('fill and reset live in the footer bottom-right actions', () => {
+  const { container } = render(<App />);
+  const actions = container.querySelector('.app-footer-actions');
+  const fill = container.querySelector('[data-cy="random-fill"]');
+  const reset = screen.getByRole('button', { name: /^reset$/i });
+  expect(actions).toBeInTheDocument();
+  expect(actions).toContainElement(fill);
+  expect(actions).toContainElement(reset);
+  expect(container.querySelector('.app-header [data-cy="random-fill"]')).not.toBeInTheDocument();
 });
 
 test('vagabond2 stays unavailable until vagabond1 is picked', () => {
