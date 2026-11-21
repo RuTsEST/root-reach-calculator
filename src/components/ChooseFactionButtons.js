@@ -10,6 +10,7 @@ import {
     statusesToFillArgs,
     totalReachForNames,
 } from "../randomFill";
+import {nextStatusOnLongPress, nextStatusOnTap} from "../factionSelection";
 import {ChooseFactionButton} from "./ChooseFactionButton";
 
 const VALID_STATUSES = new Set([IS_PICKED, IS_BANNED, IS_AVAILABLE, IS_NOT_AVAILABLE]);
@@ -60,7 +61,6 @@ export const ChooseFactionButtons = ({
     playerCount,
     setReach,
     requiredReach,
-    isBanMode,
     actionsRef,
     onFillStateChange,
 }) => {
@@ -86,15 +86,13 @@ export const ChooseFactionButtons = ({
         );
     }, [factions, fillGeneratedNames, onFillStateChange, playerCount, requiredReach]);
 
-    const handleFactionClick = (factionName) => {
-        let newFactions = {...factions};
-        const currentStatus = factions[factionName].status;
+    const applyFactionStatus = (factionName, nextStatus) => {
+        if (nextStatus == null) return;
 
-        if (isBanMode) {
-            newFactions[factionName].status = (currentStatus === IS_BANNED) ? IS_AVAILABLE : IS_BANNED;
-        } else {
-            newFactions[factionName].status = (currentStatus === IS_PICKED) ? IS_AVAILABLE : IS_PICKED;
-        }
+        let newFactions = {
+            ...factions,
+            [factionName]: { ...factions[factionName], status: nextStatus },
+        };
 
         // Manual edits: drop this name from the last fill set (it is now user-controlled).
         const nextFillGenerated = fillGeneratedNames.filter((name) => name !== factionName);
@@ -103,7 +101,15 @@ export const ChooseFactionButtons = ({
         setFactions(newFactions);
         setFillGeneratedNames(nextFillGenerated);
         persistFactionStatuses(newFactions);
-    }
+    };
+
+    const onFactionTap = (factionName) => {
+        applyFactionStatus(factionName, nextStatusOnTap(factions[factionName].status));
+    };
+
+    const onFactionLongPress = (factionName) => {
+        applyFactionStatus(factionName, nextStatusOnLongPress(factions[factionName].status));
+    };
 
     const runFill = React.useCallback(() => {
         const currentFactions = factionsRef.current;
@@ -191,9 +197,9 @@ export const ChooseFactionButtons = ({
                 return (
                     <Box key={index} sx={{ display: "flex", justifyContent: "center", alignItems: "center", gridColumn }}>
                         <ChooseFactionButton
-                            handleFactionClick={handleFactionClick}
+                            onFactionTap={onFactionTap}
+                            onFactionLongPress={onFactionLongPress}
                             faction={faction}
-                            isBanMode={isBanMode}
                             isLockedPick={isLockedPick}
                         />
                     </Box>

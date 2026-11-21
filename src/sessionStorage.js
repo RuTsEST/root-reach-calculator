@@ -2,7 +2,6 @@ const STORAGE_KEY = 'root-reach-calculator-session';
 
 const DEFAULT_SESSION = {
     playerCountKey: 'player4',
-    isBanMode: false,
     factionStatuses: {},
 };
 
@@ -20,7 +19,6 @@ export function loadSession() {
         const parsed = JSON.parse(raw);
         return {
             playerCountKey: readPlayerCountKey(parsed),
-            isBanMode: Boolean(parsed.isBanMode),
             factionStatuses:
                 parsed.factionStatuses && typeof parsed.factionStatuses === 'object'
                     ? parsed.factionStatuses
@@ -35,8 +33,9 @@ export function saveSession(partial) {
     try {
         const current = loadSession();
         const next = { ...current, ...partial };
-        // Persist only the new key; drop legacy selectedValue on write.
+        // Persist only the new key; drop legacy selectedValue / isBanMode on write.
         delete next.selectedValue;
+        delete next.isBanMode;
         window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     } catch {
         // Ignore quota / private-mode failures

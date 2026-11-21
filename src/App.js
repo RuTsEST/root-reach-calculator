@@ -10,8 +10,6 @@ import {
     DialogTitle,
     IconButton,
     Link,
-    ToggleButton,
-    ToggleButtonGroup,
     Typography,
 } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
@@ -117,7 +115,6 @@ function selectionFromSession(session) {
         playerCountKey: key,
         requiredReach: values.requiredReach,
         playerCount: values.playerCount,
-        isBanMode: session.isBanMode,
     };
 }
 
@@ -128,7 +125,6 @@ function App() {
     const [requiredReach, setRequiredReach] = React.useState(initial.requiredReach);
     const [playerCount, setPlayerCount] = React.useState(initial.playerCount);
     const [playerCountKey, setPlayerCountKey] = React.useState(initial.playerCountKey);
-    const [isBanMode, setIsBanMode] = React.useState(initial.isBanMode);
     const [fillState, setFillState] = React.useState({ disabled: false, reason: '' });
     const factionGridActionsRef = React.useRef(null);
 
@@ -171,15 +167,8 @@ function App() {
         saveSession({ playerCountKey: newKey });
     };
 
-    const handleBanModeChange = (_, v) => {
-        if (v === null) return;
-        const next = v === 'ban';
-        setIsBanMode(next);
-        saveSession({ isBanMode: next });
-    };
-
     const handleReset = () => {
-        // Clear picks/bans from session; keep mode and player selection.
+        // Clear picks/bans from session; keep player selection.
         // Grid owns local state — call reset directly (no remount / fill id).
         saveSession({ factionStatuses: {} });
         factionGridActionsRef.current?.reset();
@@ -212,15 +201,8 @@ function App() {
                 }}
             >
                 <Box className="app-header">
-                    <ToggleButtonGroup
-                        exclusive
-                        value={isBanMode ? 'ban' : 'pick'}
-                        onChange={handleBanModeChange}
-                        aria-label="Selection mode"
-                    >
-                        <ToggleButton value='pick'>Pick</ToggleButton>
-                        <ToggleButton value='ban'>Ban</ToggleButton>
-                    </ToggleButtonGroup>
+                    {/* Left hole: PR B moves theme/Ideas here; keeps Reach centered. */}
+                    <Box className="app-header-spacer" aria-hidden="true" />
                     <ReachIndicator reach={reach} requiredReach={requiredReach} />
                     <Box className="app-header-actions">
                         <IconButton
@@ -244,7 +226,6 @@ function App() {
                             playerCount={playerCount}
                             setReach={setReach}
                             requiredReach={requiredReach}
-                            isBanMode={isBanMode}
                             actionsRef={factionGridActionsRef}
                             onFillStateChange={setFillState}
                         />
