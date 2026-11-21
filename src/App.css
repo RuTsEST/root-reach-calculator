@@ -83,21 +83,20 @@
   min-width: 0;
   margin: 0;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  /* One large current/target readout — status stays compact underneath */
-  font-size: 1.35rem;
+  /* One large current/target readout; status sits beside, not under */
+  font-size: 1.4rem;
   font-weight: 700;
   line-height: 1.05;
 }
 
 .reach-values-row {
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: center;
-  gap: 0.05rem;
+  gap: 0.3rem;
   max-width: 100%;
 }
 
@@ -113,6 +112,7 @@
   opacity: 0.6;
   color: inherit;
   flex-shrink: 0;
+  align-self: center;
 }
 
 .reach-status {
@@ -120,7 +120,8 @@
   font-weight: 600;
   line-height: 1;
   letter-spacing: 0.01em;
-  margin-top: 0.05rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* Dialog body may scroll on short viewports; main UI stays no-scroll */
@@ -233,7 +234,11 @@
 
   .reach {
     /* Still the focus on SE; shrink chrome before shrinking this */
-    font-size: 1.15rem;
+    font-size: 1.2rem;
+  }
+
+  .reach-values-row {
+    gap: 0.22rem;
   }
 
   .reach-help.MuiIconButton-root {

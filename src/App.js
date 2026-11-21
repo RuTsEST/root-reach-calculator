@@ -48,6 +48,9 @@ const ReachIndicator = ({ reach, requiredReach }) => {
                     <span className="reach-values" style={{ color: statusColor }}>
                         Reach: {reach} / {requiredReach}+
                     </span>
+                    <span className="reach-status" style={{ color: statusColor }}>
+                        {statusCue}
+                    </span>
                     <IconButton
                         className="reach-help"
                         size="small"
@@ -58,9 +61,6 @@ const ReachIndicator = ({ reach, requiredReach }) => {
                     >
                         <HelpOutlineIcon fontSize="inherit" />
                     </IconButton>
-                </span>
-                <span className="reach-status" style={{ color: statusColor }}>
-                    {statusCue}
                 </span>
             </h3>
             <Dialog
