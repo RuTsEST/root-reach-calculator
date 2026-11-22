@@ -192,8 +192,7 @@ function App() {
                 }}
             >
                 <Box className="app-header">
-                    <Box className="app-header-config" aria-label="Settings">
-                        <ThemeToggleButton preference={themePreference} onToggle={handleThemeToggle} />
+                    <Box className="app-header-config app-header-config--start">
                         <IconButton
                             className="feedback-link"
                             component="a"
@@ -210,7 +209,9 @@ function App() {
                         </IconButton>
                     </Box>
                     <ReachIndicator reach={reach} requiredReach={requiredReach} />
-                    <Box className="app-header-spacer" aria-hidden="true" />
+                    <Box className="app-header-config app-header-config--end">
+                        <ThemeToggleButton preference={themePreference} onToggle={handleThemeToggle} />
+                    </Box>
                 </Box>
                 <Box className="app-main">
                     <Box className="faction-grid-wrap">

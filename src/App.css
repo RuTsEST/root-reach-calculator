@@ -60,23 +60,27 @@
   border-bottom: 1px solid var(--chrome-border);
 }
 
+/* Split muted chrome: Ideas left, theme right — balances Reach in the center */
 .app-header-config {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
   flex-shrink: 0;
   gap: 0;
   min-width: 0;
+}
+
+.app-header-config--start {
+  justify-content: flex-start;
+}
+
+.app-header-config--end {
+  justify-content: flex-end;
 }
 
 .app-header-config .MuiIconButton-root {
   padding: 0.25rem;
   color: inherit;
   opacity: 0.55;
-}
-
-.app-header-spacer {
-  min-width: 0;
 }
 
 .reach {

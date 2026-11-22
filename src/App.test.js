@@ -277,14 +277,16 @@ test('header feedback link opens Discussions Ideas in a new tab', () => {
   expect(screen.getByRole('link', { name: /leave feedback on github/i })).toBe(link);
 });
 
-test('theme toggle lives in the header config group next to feedback', () => {
+test('header splits Ideas left and theme right around Reach', () => {
   const { container } = render(<App />);
-  const config = container.querySelector('.app-header-config');
+  const start = container.querySelector('.app-header-config--start');
+  const end = container.querySelector('.app-header-config--end');
   const themeToggle = container.querySelector('[data-cy="theme-toggle"]');
   const feedback = container.querySelector('[data-cy="feedback-link"]');
-  expect(config).toBeInTheDocument();
-  expect(config).toContainElement(themeToggle);
-  expect(config).toContainElement(feedback);
+  expect(start).toContainElement(feedback);
+  expect(end).toContainElement(themeToggle);
+  expect(start).not.toContainElement(themeToggle);
+  expect(end).not.toContainElement(feedback);
   expect(container.querySelector('.app-footer [data-cy="theme-toggle"]')).not.toBeInTheDocument();
   expect(container.querySelector('.app-footer [data-cy="feedback-link"]')).not.toBeInTheDocument();
 });
