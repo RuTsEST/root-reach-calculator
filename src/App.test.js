@@ -1,8 +1,16 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import App from './App';
 import { STORAGE_KEY } from './sessionStorage';
 import { THEME_STORAGE_KEY } from './theme';
 import { FEEDBACK_URL, REACH_LAW_URL, IS_BANNED, IS_PICKED } from './constants';
+
+async function longPressFaction(fab) {
+  fireEvent.pointerDown(fab, { pointerType: 'touch', button: 0 });
+  await act(async () => {
+    jest.advanceTimersByTime(500);
+  });
+  fireEvent.pointerUp(fab);
+}
 
 function mockMatchMedia(matchesDark) {
   window.matchMedia = jest.fn().mockImplementation((query) => ({
@@ -30,16 +38,11 @@ test('reach indicator renders with initial value', () => {
   expect(indicator).toHaveTextContent('Below target');
 });
 
-test('defaults to Pick mode with Pick left of Ban', () => {
+test('header has no Pick/Ban mode toggle', () => {
   render(<App />);
-  const pick = screen.getByRole('button', { name: /^pick$/i });
-  const ban = screen.getByRole('button', { name: /^ban$/i });
-  expect(pick).toHaveAttribute('aria-pressed', 'true');
-  expect(ban).toHaveAttribute('aria-pressed', 'false');
-  // Document order: Pick before Ban
-  expect(
-    pick.compareDocumentPosition(ban) & Node.DOCUMENT_POSITION_FOLLOWING
-  ).toBeTruthy();
+  expect(screen.queryByRole('button', { name: /^pick$/i })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: /^ban$/i })).not.toBeInTheDocument();
+  expect(screen.queryByLabelText(/selection mode/i)).not.toBeInTheDocument();
 });
 
 test('reach indicator is red when reach is below required', () => {
@@ -94,7 +97,7 @@ test('reach help opens explainer dialog with law link', async () => {
   });
 });
 
-test('pick mode: clicking a faction adds its reach to the total', () => {
+test('tap picks a faction and adds its reach to the total', () => {
   const { container } = render(<App />);
   fireEvent.click(container.querySelector('[data-cy="marquise"]'));
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
@@ -102,16 +105,42 @@ test('pick mode: clicking a faction adds its reach to the total', () => {
   expect(indicator).toHaveTextContent('Below target');
 });
 
-test('ban mode: clicking a faction bans it without adding reach', () => {
+test('tap cycles available → picked → banned → available', () => {
   const { container } = render(<App />);
-  fireEvent.click(screen.getByRole('button', { name: /^ban$/i }));
-  fireEvent.click(container.querySelector('[data-cy="marquise"]'));
-  const indicator = container.querySelector('[data-cy="reach-indicator"]');
-  expect(indicator).toHaveTextContent('Reach: 0 / 21+');
-  expect(indicator).toHaveTextContent('Below target');
+  const marquise = container.querySelector('[data-cy="marquise"]');
+
+  fireEvent.click(marquise);
+  expect(marquise.querySelector('[data-cy="pick-locked"]')).toBeInTheDocument();
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 10 / 21+');
+
+  fireEvent.click(marquise);
+  expect(marquise.querySelector('[data-testid="NotInterestedOutlinedIcon"]')).toBeInTheDocument();
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 0 / 21+');
+
+  fireEvent.click(marquise);
+  expect(marquise.querySelector('[data-testid="NotInterestedOutlinedIcon"]')).not.toBeInTheDocument();
+  expect(marquise.querySelector('[data-cy="pick-locked"]')).not.toBeInTheDocument();
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 0 / 21+');
 });
 
-test('ban mode: can ban a faction grayed out as unavailable', () => {
+test('long-press bans available; long-press again clears ban', async () => {
+  jest.useFakeTimers();
+  const { container } = render(<App />);
+  const marquise = container.querySelector('[data-cy="marquise"]');
+
+  await longPressFaction(marquise);
+
+  expect(marquise.querySelector('[data-testid="NotInterestedOutlinedIcon"]')).toBeInTheDocument();
+  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 0 / 21+');
+
+  await longPressFaction(marquise);
+
+  expect(marquise.querySelector('[data-testid="NotInterestedOutlinedIcon"]')).not.toBeInTheDocument();
+  jest.useRealTimers();
+});
+
+test('long-press can ban a grayed-out unavailable faction', async () => {
+  jest.useFakeTimers();
   const { container } = render(<App />);
   // Fill all 4 player slots so remaining factions are IS_NOT_AVAILABLE
   fireEvent.click(container.querySelector('[data-cy="marquise"]'));
@@ -120,7 +149,7 @@ test('ban mode: can ban a faction grayed out as unavailable', () => {
   fireEvent.click(container.querySelector('[data-cy="eyrie"]'));
 
   const alliance = container.querySelector('[data-cy="alliance"]');
-  expect(alliance).toBeDisabled();
+  expect(alliance).toHaveAttribute('aria-disabled', 'true');
   expect(alliance).toHaveStyle({
     width: 'var(--faction-fab-size-disabled)',
     opacity: '50%',
@@ -128,18 +157,17 @@ test('ban mode: can ban a faction grayed out as unavailable', () => {
   // Slot still reserves full fab geometry so disabled shrink does not collapse rows.
   expect(alliance.closest('.faction-fab-slot')).toBeTruthy();
 
-  fireEvent.click(screen.getByRole('button', { name: /^ban$/i }));
-  expect(alliance).not.toBeDisabled();
-  // Ban mode restores full size/opacity so unavailable fabs look clickable
-  expect(alliance).toHaveStyle({
-    width: 'var(--faction-fab-size)',
-    opacity: '100%',
-  });
-
+  // Tap does not pick unavailable
   fireEvent.click(alliance);
-  expect(alliance).not.toBeDisabled();
+  expect(alliance.querySelector('[data-cy="pick-locked"]')).not.toBeInTheDocument();
+  expect(alliance.querySelector('[data-testid="NotInterestedOutlinedIcon"]')).not.toBeInTheDocument();
+
+  await longPressFaction(alliance);
+
   expect(alliance.querySelector('[data-testid="NotInterestedOutlinedIcon"]')).toBeInTheDocument();
+  expect(alliance).not.toHaveAttribute('aria-disabled');
   expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 34 / 21+');
+  jest.useRealTimers();
 });
 
 test('defaults to 4 players selected', () => {
@@ -169,7 +197,6 @@ test('switching player count updates Law of Root reach target', () => {
 test('legacy clockwork session keys fall back to default player4', () => {
   window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
     selectedValue: '1clockwork4',
-    isBanMode: false,
     factionStatuses: {},
   }));
   const { container } = render(<App />);
@@ -180,7 +207,6 @@ test('legacy clockwork session keys fall back to default player4', () => {
 test('migrates legacy selectedValue session key to playerCountKey on write', () => {
   window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
     selectedValue: 'player3',
-    isBanMode: false,
     factionStatuses: {},
   }));
   const { container } = render(<App />);
@@ -191,6 +217,7 @@ test('migrates legacy selectedValue session key to playerCountKey on write', () 
   const stored = JSON.parse(window.sessionStorage.getItem(STORAGE_KEY));
   expect(stored.playerCountKey).toBe('player5');
   expect(stored.selectedValue).toBeUndefined();
+  expect(stored.isBanMode).toBeUndefined();
 });
 
 test('reset button clears picked factions and returns reach to 0', () => {
@@ -266,12 +293,13 @@ test('theme toggle lives in the footer config group next to feedback', () => {
 test('vagabond2 stays unavailable until vagabond1 is picked', () => {
   const { container } = render(<App />);
   const vagabond2 = container.querySelector('[data-cy="vagabond2"]');
-  expect(vagabond2).toBeDisabled();
+  // Unavailable keeps pointer events for long-press ban; blocked via aria + gray-out.
+  expect(vagabond2).toHaveAttribute('aria-disabled', 'true');
 
   fireEvent.click(container.querySelector('[data-cy="marquise"]'));
   fireEvent.click(container.querySelector('[data-cy="vagabond1"]'));
-  expect(container.querySelector('[data-cy="vagabond1"]')).not.toBeDisabled();
-  expect(container.querySelector('[data-cy="vagabond2"]')).not.toBeDisabled();
+  expect(container.querySelector('[data-cy="vagabond1"]')).not.toHaveAttribute('aria-disabled');
+  expect(container.querySelector('[data-cy="vagabond2"]')).not.toHaveAttribute('aria-disabled');
 
   fireEvent.click(container.querySelector('[data-cy="vagabond2"]'));
   expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 17 / 21+');
@@ -283,15 +311,15 @@ test('picking a vagabond makes knaves unavailable', () => {
   fireEvent.click(container.querySelector('[data-cy="vagabond1"]'));
 
   const knaves = container.querySelector('[data-cy="knaves"]');
-  expect(knaves).toBeDisabled();
+  expect(knaves).toHaveAttribute('aria-disabled', 'true');
 });
 
 test('picking knaves makes both vagabonds unavailable', () => {
   const { container } = render(<App />);
   fireEvent.click(container.querySelector('[data-cy="knaves"]'));
 
-  expect(container.querySelector('[data-cy="vagabond1"]')).toBeDisabled();
-  expect(container.querySelector('[data-cy="vagabond2"]')).toBeDisabled();
+  expect(container.querySelector('[data-cy="vagabond1"]')).toHaveAttribute('aria-disabled', 'true');
+  expect(container.querySelector('[data-cy="vagabond2"]')).toHaveAttribute('aria-disabled', 'true');
   expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 4 / 21+');
 });
 
@@ -304,7 +332,7 @@ test('Homeland factions contribute their catalog reach', () => {
   expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 15 / 21+');
 });
 
-test('sessionStorage restores picks, bans, mode, and player selection', () => {
+test('sessionStorage restores picks, bans, and player selection', () => {
   window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
     playerCountKey: 'player3',
     isBanMode: true,
@@ -316,16 +344,23 @@ test('sessionStorage restores picks, bans, mode, and player selection', () => {
 
   const { container } = render(<App />);
   expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Reach: 10 / 18+');
-  expect(screen.getByRole('button', { name: /^ban$/i })).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.queryByRole('button', { name: /^ban$/i })).not.toBeInTheDocument();
   expect(screen.getByRole('button', { name: /^3 players$/i })).toHaveAttribute('aria-pressed', 'true');
   expect(container.querySelector('[data-cy="alliance"]')
     .querySelector('[data-testid="NotInterestedOutlinedIcon"]')).toBeInTheDocument();
+
+  // Legacy isBanMode is dropped on the next session write
+  fireEvent.click(screen.getByRole('button', { name: /^4 players$/i }));
+  const stored = JSON.parse(window.sessionStorage.getItem(STORAGE_KEY));
+  expect(stored.isBanMode).toBeUndefined();
+  expect(stored.factionStatuses.marquise).toBe(IS_PICKED);
 });
 
 test('reset clears persisted faction picks and bans', () => {
   const { container } = render(<App />);
   fireEvent.click(container.querySelector('[data-cy="marquise"]'));
-  fireEvent.click(screen.getByRole('button', { name: /^ban$/i }));
+  // Second tap bans
+  fireEvent.click(container.querySelector('[data-cy="alliance"]'));
   fireEvent.click(container.querySelector('[data-cy="alliance"]'));
 
   const before = JSON.parse(window.sessionStorage.getItem(STORAGE_KEY));
@@ -337,7 +372,7 @@ test('reset clears persisted faction picks and bans', () => {
 
   const after = JSON.parse(window.sessionStorage.getItem(STORAGE_KEY));
   expect(after.factionStatuses).toEqual({});
-  expect(after.isBanMode).toBe(true);
+  expect(after.isBanMode).toBeUndefined();
 });
 
 test('default theme preference is system; OS dark opens dark', () => {
@@ -457,12 +492,13 @@ test('random fill: keeps locked picks and only fills remaining seats', () => {
   expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Viable');
 });
 
-test('random fill: respects bans', () => {
+test('random fill: respects bans', async () => {
+  jest.useFakeTimers();
   const { container } = render(<App />);
-  fireEvent.click(screen.getByRole('button', { name: /^ban$/i }));
-  fireEvent.click(container.querySelector('[data-cy="marquise"]'));
-  fireEvent.click(container.querySelector('[data-cy="hundreds"]'));
-  fireEvent.click(screen.getByRole('button', { name: /^pick$/i }));
+  for (const name of ['marquise', 'hundreds']) {
+    await longPressFaction(container.querySelector(`[data-cy="${name}"]`));
+  }
+  jest.useRealTimers();
 
   fireEvent.click(screen.getByRole('button', { name: /fill random factions/i }));
 
@@ -474,16 +510,17 @@ test('random fill: respects bans', () => {
     .querySelector('[data-testid="NotInterestedOutlinedIcon"]')).toBeInTheDocument();
 });
 
-test('random fill: disabled with reason when no valid spread', () => {
+test('random fill: disabled with reason when no valid spread', async () => {
+  jest.useFakeTimers();
   const { container } = render(<App />);
-  fireEvent.click(screen.getByRole('button', { name: /^ban$/i }));
   // Ban enough high-reach factions that 4p / 21+ is impossible
-  [
+  for (const name of [
     'marquise', 'hundreds', 'duchy', 'keepers', 'eyrie', 'lilypad',
     'riverfolk', 'vagabond1', 'twilight', 'knaves',
-  ].forEach((name) => {
-    fireEvent.click(container.querySelector(`[data-cy="${name}"]`));
-  });
+  ]) {
+    await longPressFaction(container.querySelector(`[data-cy="${name}"]`));
+  }
+  jest.useRealTimers();
 
   const fillBtn = screen.getByRole('button', { name: /fill random factions/i });
   expect(fillBtn).toBeDisabled();
