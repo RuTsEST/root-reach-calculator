@@ -35,7 +35,6 @@ import {
 const ReachIndicator = ({ reach, requiredReach }) => {
     const [helpOpen, setHelpOpen] = React.useState(false);
     const isMet = reach >= requiredReach;
-    const statusCue = isMet ? 'Viable' : 'Below target';
     const statusColor = isMet ? '#4da251' : '#b66969';
     return (
         <>
@@ -47,9 +46,6 @@ const ReachIndicator = ({ reach, requiredReach }) => {
                 <span className="reach-values-row">
                     <span className="reach-values" style={{ color: statusColor }}>
                         Reach: {reach} / {requiredReach}+
-                    </span>
-                    <span className="reach-status" style={{ color: statusColor }}>
-                        {statusCue}
                     </span>
                     <IconButton
                         className="reach-help"

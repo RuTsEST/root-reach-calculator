@@ -35,7 +35,9 @@ test('reach indicator renders with initial value', () => {
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
   expect(indicator).toBeInTheDocument();
   expect(indicator).toHaveTextContent('Reach: 0 / 21+');
-  expect(indicator).toHaveTextContent('Below target');
+  expect(indicator.querySelector('.reach-status')).not.toBeInTheDocument();
+  expect(indicator).not.toHaveTextContent('Below target');
+  expect(indicator).not.toHaveTextContent('Viable');
 });
 
 test('header has no Pick/Ban mode toggle', () => {
@@ -49,8 +51,6 @@ test('reach indicator is red when reach is below required', () => {
   const { container } = render(<App />);
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
   expect(indicator.querySelector('.reach-values')).toHaveStyle({ color: '#b66969' });
-  expect(indicator.querySelector('.reach-status')).toHaveStyle({ color: '#b66969' });
-  expect(indicator).toHaveTextContent('Below target');
 });
 
 test('reach indicator turns green when reach meets required', () => {
@@ -62,8 +62,6 @@ test('reach indicator turns green when reach meets required', () => {
   fireEvent.click(container.querySelector('[data-cy="hundreds"]'));
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
   expect(indicator.querySelector('.reach-values')).toHaveStyle({ color: '#4da251' });
-  expect(indicator.querySelector('.reach-status')).toHaveStyle({ color: '#4da251' });
-  expect(indicator).toHaveTextContent('Viable');
 });
 
 test('reach help opens explainer dialog with law link', async () => {
@@ -102,7 +100,7 @@ test('tap picks a faction and adds its reach to the total', () => {
   fireEvent.click(container.querySelector('[data-cy="marquise"]'));
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
   expect(indicator).toHaveTextContent('Reach: 10 / 21+');
-  expect(indicator).toHaveTextContent('Below target');
+  expect(indicator.querySelector('.reach-values')).toHaveStyle({ color: '#b66969' });
 });
 
 test('tap cycles available → picked → banned → available', () => {
@@ -227,7 +225,7 @@ test('reset button clears picked factions and returns reach to 0', () => {
   fireEvent.click(screen.getByRole('button', { name: /reset/i }));
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
   expect(indicator).toHaveTextContent('Reach: 0 / 21+');
-  expect(indicator).toHaveTextContent('Below target');
+  expect(indicator.querySelector('.reach-values')).toHaveStyle({ color: '#b66969' });
 });
 
 test('faction buttons expose accessible names', () => {
@@ -476,7 +474,7 @@ function pickedFactionNames(container) {
     .map((el) => el.getAttribute('data-cy'));
 }
 
-test('random fill: empty board fills exactly Players with reach Viable', () => {
+test('random fill: empty board fills exactly Players with reach met', () => {
   const { container } = render(<App />);
   const fillBtn = screen.getByRole('button', { name: /fill random factions/i });
   expect(fillBtn).not.toBeDisabled();
@@ -485,7 +483,7 @@ test('random fill: empty board fills exactly Players with reach Viable', () => {
 
   expect(countPicked(container)).toBe(4);
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
-  expect(indicator).toHaveTextContent('Viable');
+  expect(indicator.querySelector('.reach-values')).toHaveStyle({ color: '#4da251' });
   const reachMatch = indicator.textContent.match(/Reach:\s*(\d+)/);
   expect(Number(reachMatch[1])).toBeGreaterThanOrEqual(21);
 });
@@ -501,7 +499,8 @@ test('random fill: keeps locked picks and only fills remaining seats', () => {
   expect(picked).toHaveLength(4);
   expect(picked).toContain('marquise');
   expect(picked).toContain('duchy');
-  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Viable');
+  expect(container.querySelector('[data-cy="reach-indicator"] .reach-values'))
+    .toHaveStyle({ color: '#4da251' });
 });
 
 test('random fill: respects bans', async () => {
@@ -543,7 +542,8 @@ test('reset after random fill clears to empty starting board', () => {
   const { container } = render(<App />);
   fireEvent.click(screen.getByRole('button', { name: /fill random factions/i }));
   expect(countPicked(container)).toBe(4);
-  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Viable');
+  expect(container.querySelector('[data-cy="reach-indicator"] .reach-values'))
+    .toHaveStyle({ color: '#4da251' });
 
   fireEvent.click(screen.getByRole('button', { name: /reset/i }));
 
@@ -551,7 +551,7 @@ test('reset after random fill clears to empty starting board', () => {
   expect(container.querySelectorAll('[data-testid="NotInterestedOutlinedIcon"]')).toHaveLength(0);
   const indicator = container.querySelector('[data-cy="reach-indicator"]');
   expect(indicator).toHaveTextContent('Reach: 0 / 21+');
-  expect(indicator).toHaveTextContent('Below target');
+  expect(indicator.querySelector('.reach-values')).toHaveStyle({ color: '#b66969' });
   // Reset must not re-fire a prior fill (no remount/id protocol).
   expect(container.querySelectorAll('[data-cy="pick-fill"]')).toHaveLength(0);
   expect(container.querySelectorAll('[data-cy="pick-locked"]')).toHaveLength(0);
@@ -569,7 +569,8 @@ test('reset then fill works again without leftover picks', () => {
   expect(fillBtn).not.toBeDisabled();
   fireEvent.click(fillBtn);
   expect(countPicked(container)).toBe(4);
-  expect(container.querySelector('[data-cy="reach-indicator"]')).toHaveTextContent('Viable');
+  expect(container.querySelector('[data-cy="reach-indicator"] .reach-values'))
+    .toHaveStyle({ color: '#4da251' });
 });
 
 test('human picks use solid check; fill picks use outline check', () => {
