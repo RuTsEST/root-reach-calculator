@@ -300,6 +300,8 @@ test('fill and reset live in the footer bottom-right actions', () => {
   expect(actions).toContainElement(fill);
   expect(actions).toContainElement(reset);
   expect(container.querySelector('.app-header [data-cy="random-fill"]')).not.toBeInTheDocument();
+  expect(container.querySelector('.app-footer .player-count-bar')).toBeInTheDocument();
+  expect(container.querySelector('.app-footer .player-count-label')).toBeInTheDocument();
 });
 
 test('vagabond2 stays unavailable until vagabond1 is picked', () => {

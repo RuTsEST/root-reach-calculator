@@ -1,19 +1,8 @@
 import * as React from 'react';
-import { Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
+import { Stack, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { playerCountFromKey, playerCountKeyFromCount } from '../data/reachThresholds';
 
 const PLAYER_OPTIONS = ['2', '3', '4', '5', '6'];
-
-const labelSx = {
-    color: 'text.secondary',
-    fontSize: { xs: '0.62rem', sm: '0.75rem' },
-    fontWeight: 600,
-    letterSpacing: '0.02em',
-    lineHeight: 1,
-    textTransform: 'uppercase',
-    userSelect: 'none',
-    flexShrink: 0,
-};
 
 const groupSx = {
     flexShrink: 0,
@@ -46,38 +35,34 @@ export const PlayerCountButtons = ({ playerCountKey, onPlayerCountChange }) => {
             alignItems="center"
             justifyContent="center"
             sx={{
-                px: { xs: 0.4, sm: 0.75 },
+                px: { xs: 0.25, sm: 0.5 },
                 py: { xs: 0.55, sm: 0.65 },
-                gap: { xs: 0.65, sm: 1.5 },
-                overflowX: 'auto',
             }}
         >
-            <Stack direction="row" alignItems="center" sx={{ gap: { xs: 0.35, sm: 0.75 }, flexShrink: 0 }}>
-                <Typography component="span" sx={labelSx} aria-hidden="true">
-                    Players
-                </Typography>
-                <ToggleButtonGroup
-                    exclusive
-                    size="small"
-                    value={String(players)}
-                    onChange={handlePlayersChange}
-                    aria-label="Players"
-                    sx={groupSx}
-                >
-                    {PLAYER_OPTIONS.map((count) => {
-                        const n = Number(count);
-                        return (
-                            <ToggleButton
-                                key={count}
-                                value={count}
-                                aria-label={`${n} player${n === 1 ? '' : 's'}`}
-                            >
-                                {count}
-                            </ToggleButton>
-                        );
-                    })}
-                </ToggleButtonGroup>
-            </Stack>
+            <span className="player-count-label" aria-hidden="true">
+                Players
+            </span>
+            <ToggleButtonGroup
+                exclusive
+                size="small"
+                value={String(players)}
+                onChange={handlePlayersChange}
+                aria-label="Players"
+                sx={groupSx}
+            >
+                {PLAYER_OPTIONS.map((count) => {
+                    const n = Number(count);
+                    return (
+                        <ToggleButton
+                            key={count}
+                            value={count}
+                            aria-label={`${n} player${n === 1 ? '' : 's'}`}
+                        >
+                            {count}
+                        </ToggleButton>
+                    );
+                })}
+            </ToggleButtonGroup>
         </Stack>
     );
 };

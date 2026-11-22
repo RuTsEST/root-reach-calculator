@@ -124,13 +124,17 @@
   overflow-y: auto;
 }
 
+/* Center the 2–6 toggle; Players label hangs left; fill/reset stay bottom-right */
 .app-footer {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
   border-top: 1px solid var(--chrome-border);
+  padding-inline: 0.1rem;
 }
 
-/* Thumb-corner draft actions (fill + reset) — absolute so Players stays centered */
 .app-footer-actions {
   position: absolute;
   right: 0.1rem;
@@ -147,9 +151,28 @@
   color: inherit;
 }
 
-/* Keep centered Players chips clear of the corner action icons */
 .app-footer .player-count-bar {
-  padding-right: 4.5rem;
+  /* In-flow content is only the toggle group — true footer center */
+  position: relative;
+}
+
+/* Hang left of the centered 2–6 group; normal proportions (no MUI stretch quirks) */
+.player-count-label {
+  position: absolute;
+  right: 100%;
+  margin-right: 0.75rem;
+  color: inherit;
+  opacity: 0.72;
+  font-size: 13px;
+  font-weight: 600;
+  font-stretch: normal;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  text-transform: uppercase;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+  transform: none;
 }
 
 .app-main {
@@ -236,8 +259,8 @@
   }
 
   .app-footer .player-count-bar {
-    padding-top: 0.3rem;
-    padding-bottom: 0.3rem;
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
   }
 }
 
