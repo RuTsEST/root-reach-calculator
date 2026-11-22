@@ -35,7 +35,7 @@ import {
 const ReachIndicator = ({ reach, requiredReach }) => {
     const [helpOpen, setHelpOpen] = React.useState(false);
     const isMet = reach >= requiredReach;
-    const statusCue = isMet ? 'Viable' : 'Below target';
+    const statusColor = isMet ? '#4da251' : '#b66969';
     return (
         <>
             <h3
@@ -44,10 +44,7 @@ const ReachIndicator = ({ reach, requiredReach }) => {
                 aria-live="polite"
             >
                 <span className="reach-values-row">
-                    <span
-                        className="reach-values"
-                        style={{ color: isMet ? '#4da251' : '#b66969' }}
-                    >
+                    <span className="reach-values" style={{ color: statusColor }}>
                         Reach: {reach} / {requiredReach}+
                     </span>
                     <IconButton
@@ -60,12 +57,6 @@ const ReachIndicator = ({ reach, requiredReach }) => {
                     >
                         <HelpOutlineIcon fontSize="inherit" />
                     </IconButton>
-                </span>
-                <span
-                    className="reach-status"
-                    style={{ color: isMet ? '#4da251' : '#b66969' }}
-                >
-                    {statusCue}
                 </span>
             </h3>
             <Dialog
@@ -201,23 +192,25 @@ function App() {
                 }}
             >
                 <Box className="app-header">
-                    {/* Left hole: PR B moves theme/Ideas here; keeps Reach centered. */}
-                    <Box className="app-header-spacer" aria-hidden="true" />
-                    <ReachIndicator reach={reach} requiredReach={requiredReach} />
-                    <Box className="app-header-actions">
+                    <Box className="app-header-config app-header-config--start">
                         <IconButton
-                            onClick={handleRandomFill}
+                            className="feedback-link"
+                            component="a"
+                            href={FEEDBACK_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             size="small"
-                            aria-label="Fill random factions"
-                            title={fillTitle}
-                            disabled={fillState.disabled}
-                            data-cy="random-fill"
+                            aria-label="Leave feedback on GitHub"
+                            title="Leave feedback on GitHub"
+                            data-cy="feedback-link"
+                            color="default"
                         >
-                            <CasinoIcon fontSize="small" />
+                            <FeedbackOutlinedIcon fontSize="small" />
                         </IconButton>
-                        <IconButton onClick={handleReset} size="small" aria-label="Reset">
-                            <RefreshIcon fontSize="small" />
-                        </IconButton>
+                    </Box>
+                    <ReachIndicator reach={reach} requiredReach={requiredReach} />
+                    <Box className="app-header-config app-header-config--end">
+                        <ThemeToggleButton preference={themePreference} onToggle={handleThemeToggle} />
                     </Box>
                 </Box>
                 <Box className="app-main">
@@ -236,21 +229,19 @@ function App() {
                         playerCountKey={playerCountKey}
                         onPlayerCountChange={onPlayerCountChange}
                     />
-                    <Box className="app-footer-config" aria-label="Settings">
-                        <ThemeToggleButton preference={themePreference} onToggle={handleThemeToggle} />
+                    <Box className="app-footer-actions" aria-label="Draft actions">
                         <IconButton
-                            className="feedback-link"
-                            component="a"
-                            href={FEEDBACK_URL}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            onClick={handleRandomFill}
                             size="small"
-                            aria-label="Leave feedback on GitHub"
-                            title="Leave feedback on GitHub"
-                            data-cy="feedback-link"
-                            color="default"
+                            aria-label="Fill random factions"
+                            title={fillTitle}
+                            disabled={fillState.disabled}
+                            data-cy="random-fill"
                         >
-                            <FeedbackOutlinedIcon fontSize="small" />
+                            <CasinoIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton onClick={handleReset} size="small" aria-label="Reset">
+                            <RefreshIcon fontSize="small" />
                         </IconButton>
                     </Box>
                 </Box>
